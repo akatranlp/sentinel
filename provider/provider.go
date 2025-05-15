@@ -19,7 +19,7 @@ import (
 	"golang.org/x/oauth2/github"
 )
 
-// ENUM(gitlab, github, gitea)
+// ENUM(gitlab, github, gitea, keycloak)
 type ProviderType string
 
 type Provider interface {
@@ -54,6 +54,10 @@ func NewGitLabProvider(name, slug, clientID, clientSecret, baseURL string) (*OID
 
 func NewGiteaProvider(name, slug, clientID, clientSecret, baseURL string) (*OIDCProvider, error) {
 	return NewOIDCProvider(name, slug, ProviderTypeGitea, clientID, clientSecret, baseURL, []string{oidc.ScopeOpenID, "profile", "email"})
+}
+
+func NewKeycloakProvider(name, slug, clientID, clientSecret, baseURL string) (*OIDCProvider, error) {
+	return NewOIDCProvider(name, slug, ProviderTypeKeycloak, clientID, clientSecret, baseURL, []string{oidc.ScopeOpenID, "profile", "email", "offline_access"})
 }
 
 func NewOIDCProvider(name, slug string, providerType ProviderType, clientID, clientSecret, baseURL string, scopes []string) (*OIDCProvider, error) {
@@ -363,6 +367,8 @@ func ProviderFactory(params FactoryParams) (Provider, error) {
 		return NewGiteaProvider(params.Name, params.Slug, params.ClientID, params.ClientSecret, params.BaseURL)
 	case "gitlab":
 		return NewGitLabProvider(params.Name, params.Slug, params.ClientID, params.ClientSecret, params.BaseURL)
+	case "keycloak":
+		return NewKeycloakProvider(params.Name, params.Slug, params.ClientID, params.ClientSecret, params.BaseURL)
 	default:
 		return nil, errors.New("no valid provider type")
 	}

@@ -21,5 +21,13 @@
     "type": "github",
     "client_id": "",
     "client_secret": ""
+  },
+  {
+    "name": "KeyCloak",
+    "slug": "keycloak",
+    "type": "keycloak",
+    "base_url": "https://<keycloak-url>/realms/<realm>",
+    "client_id": "",
+    "client_secret": ""
   }
 ]
