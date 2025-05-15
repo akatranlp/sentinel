@@ -1,0 +1,12 @@
+package web
+
+import "github.com/akatranlp/sentinel/openid/web/shared"
+
+templ ErrorPage(errorType, errMessage string) {
+	{{ path := shared.GetURLPath(ctx) }}
+	@Page("Error Page", nil) {
+		<h1 class="text-5xl">{ errorType }</h1>
+		<h2 class="text-2xl">{ path }</h2>
+		<p>{ errMessage }</p>
+	}
+}

@@ -1,0 +1,44 @@
+package web
+
+import "github.com/akatranlp/sentinel/openid/web/shared"
+
+templ Logout(csrfFieldName, csrfToken, sessionID, redirect string) {
+	{{ basePath := shared.GetBasePath(ctx) }}
+	@Page("Logout", nil) {
+		<div class="flex w-full max-w-sm flex-col gap-6">
+			<div class="flex flex-col gap-6">
+				<div class="card">
+					<div class="card-header text-center">
+						<div class="card-title text-xl flex flex-col items-center">
+							<svg
+								xmlns="http://www.w3.org/2000/svg"
+								width="100"
+								height="120"
+								viewBox="0 0 24 24"
+								fill="none"
+								stroke="currentColor"
+								stroke-width="2"
+								stroke-linecap="round"
+								stroke-linejoin="round"
+								class="lucide lucide-log-out-icon lucide-log-out"
+							>
+								<path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+								<polyline points="16 17 21 12 16 7"></polyline>
+								<line x1="21" x2="9" y1="12" y2="12"></line>
+							</svg>
+							Are your sure you want to logout?
+						</div>
+						<div class="card-description"></div>
+					</div>
+					<form method="POST" class="card-footer flex-row-reverse justify-between">
+						<input type="hidden" name={ csrfFieldName } value={ csrfToken }/>
+						<input type="hidden" name="sid" value={ sessionID }/>
+						<input type="hidden" name="redirect" value={ redirect }/>
+						<button class="btn-primary" type="submit">Yes, Log Me Out</button>
+						<a class="btn-outline" href={ templ.SafeURL(basePath) }>No Stay Here</a>
+					</form>
+				</div>
+			</div>
+		</div>
+	}
+}

@@ -1,0 +1,86 @@
+package web
+
+import "github.com/akatranlp/sentinel/openid/web/shared"
+import "github.com/akatranlp/sentinel/account"
+
+templ UserEdit(user account.User, accounts []account.Account, csrfFieldName, csrfToken, redirect string) {
+	{{ basePath := shared.GetBasePath(ctx) }}
+	@Page("User", &user) {
+		<div class="flex w-full max-w-lg flex-col gap-6">
+			<div class="flex flex-col gap-6">
+				<div class="card">
+					<div class="card-header text-center">
+						<div class="card-title text-xl">
+							User Page
+						</div>
+					</div>
+					<div class="card-content">
+						<div class="flex flex-col gap-6">
+							<form method="POST" class="grid gap-2 grid-cols-1 md:grid-cols-2">
+								<input type="hidden" name={ csrfFieldName } value={ csrfToken }/>
+								<img id="profile-img" class="size-32 row-span-3 rounded-full self-center justify-self-center" alt="Profile-picture" src={ user.Picture }/>
+								<select class="input" name="name">
+									for _, acc := range accounts {
+										if user.Name == acc.Name {
+											<option selected value={ acc.Provider }>{ acc.Name }</option>
+										} else {
+											<option value={ acc.Provider }>{ acc.Name }</option>
+										}
+									}
+								</select>
+								<select class="input" name="username">
+									for _, acc := range accounts {
+										if user.Username == acc.PreferredUsername {
+											<option selected value={ acc.Provider }>{ acc.PreferredUsername }</option>
+										} else {
+											<option value={ acc.Provider }>{ acc.PreferredUsername }</option>
+										}
+									}
+								</select>
+								<select class="input" name="email">
+									for _, acc := range accounts {
+										if user.Email == acc.Email {
+											<option selected value={ acc.Provider }>{ acc.Email }</option>
+										} else {
+											<option value={ acc.Provider }>{ acc.Email }</option>
+										}
+									}
+								</select>
+								<select class="input" id="profile-img-select" name="picture">
+									for _, acc := range accounts {
+										if user.Picture == acc.Picture {
+											<option selected value={ acc.Provider }>{ acc.Provider }</option>
+										} else {
+											<option value={ acc.Provider }>{ acc.Provider }</option>
+										}
+									}
+								</select>
+								<div class="flex justify-between">
+									<a class="btn-outline" href={ templ.SafeURL(basePath + "/user") }>Cancel</a>
+									<button class="btn-primary" type="submit">Edit</button>
+								</div>
+							</form>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<script>
+			const profilePics = new Map()
+			function addPicOption(id, url) {
+				profilePics.set(id, url)
+			}
+		</script>
+		for _, acc := range accounts {
+			@templ.JSFuncCall("addPicOption", acc.Provider, acc.Picture)
+		}
+		<script>
+			const profileImage = document.getElementById("profile-img")
+			const profileImageSelect = document.getElementById("profile-img-select")
+			profileImageSelect.addEventListener("change", (e) => {
+				profileImage.src = profilePics.get(e.target.value)
+			})
+			profileImage.src = profilePics.get(profileImageSelect.value)
+		</script>
+	}
+}

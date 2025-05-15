@@ -1,0 +1,83 @@
+package web
+
+import (
+	"github.com/akatranlp/sentinel/openid/web/components"
+	"github.com/akatranlp/sentinel/openid/web/shared"
+)
+
+type Provider struct {
+	Name string
+	Slug string
+	Icon string
+}
+
+templ Login(providers []Provider, csrfFieldName, csrfToken, redirect string) {
+	{{ basePath := shared.GetBasePath(ctx) }}
+	@Page("Login", nil) {
+		<div class="flex w-full max-w-sm flex-col gap-6">
+			// TODO: Logo of GitClassrooms
+			<a href={ templ.SafeURL(basePath) } class="flex items-center gap-2 self-center font-medium">
+				<div class="flex h-6 w-6 items-center justify-center rounded-md bg-primary text-primary-foreground">
+					<svg xmlns="http://www.w3.org/2000/svg" class="size-4" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-gallery-vertical-end-icon lucide-gallery-vertical-end"><path d="M7 2h10"></path><path d="M5 6h14"></path><rect width="18" height="12" x="3" y="10" rx="2"></rect></svg>
+				</div>
+				GitClassrooms
+			</a>
+			<div class="flex flex-col gap-6">
+				<div class="card">
+					<div class="card-header text-center">
+						<div class="card-title text-xl">
+							Welcome Back
+						</div>
+						<div class="card-description">
+							Login With one of the following Providers
+						</div>
+					</div>
+					<div class="card-content">
+						<div class="grid gap-6">
+							<div class="flex flex-col gap-4">
+								for _, v := range providers {
+									<form
+										method="POST"
+										action={ templ.SafeURL(basePath + "/" + v.Slug + "/login") }
+										class="w-full"
+									>
+										<input type="hidden" name="redirect" value={ redirect }/>
+										<input type="hidden" name={ csrfFieldName } value={ csrfToken }/>
+										<button type="submit" class="btn-outline w-full">
+											<span class="col-start-2">
+												if v.Icon == "gitlab" {
+													@components.GitLabIcon("size-6")
+												} else if v.Icon == "github" {
+													@components.GitHubIcon("size-6")
+												} else if v.Icon == "gitea" {
+													@components.GiteaIcon("size-6")
+												}
+											</span>
+											<p>Login with { v.Name }</p>
+										</button>
+									</form>
+								}
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="text-balance text-center text-xs text-muted-foreground [&_a]:underline [&_a]:underline-offset-4 [&_a]:hover:text-primary  ">
+					By clicking continue, you agree to our <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a>.
+				</div>
+			</div>
+		</div>
+		<script>
+			const forms = document.querySelectorAll("form")
+			const formButtons = document.querySelectorAll("form button")
+
+			// forms.forEach((form) => {
+			// 	form.addEventListener("submit", () => {
+			// 		formButtons.forEach((btn) => {
+			// 			btn.disabled = true
+			// 			btn.firstChild.innerHTML = `<svg class="animate-spin size-6" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-loader-circle-icon lucide-loader-circle"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg>`
+			// 		})
+			// 	})
+			// })
+		</script>
+	}
+}

@@ -1,0 +1,25 @@
+[
+  {
+    "name": "Gitea",
+    "slug": "gitea",
+    "type": "gitea",
+    "base_url": "https://gitea.com/",
+    "client_id": "",
+    "client_secret": ""
+  },
+  {
+    "name": "GitLab",
+    "slug": "gitlab",
+    "type": "gitlab",
+    "base_url": "https://gitlab.com",
+    "client_id": "",
+    "client_secret": ""
+  },
+  {
+    "name": "GitHub",
+    "slug": "github",
+    "type": "github",
+    "client_id": "",
+    "client_secret": ""
+  }
+]

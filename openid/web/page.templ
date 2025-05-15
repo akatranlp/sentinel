@@ -1,0 +1,171 @@
+package web
+
+import (
+	"github.com/akatranlp/sentinel/account"
+	//"github.com/akatranlp/sentinel/openid/web/components"
+	"github.com/akatranlp/sentinel/openid/web/shared"
+	//"strconv"
+)
+
+type theme struct {
+	name string
+	text string
+}
+
+var themes = []theme{
+	{name: "default", text: "Default"},
+	{name: "red", text: "Red"},
+	{name: "rose", text: "Rose"},
+	{name: "orange", text: "Orange"},
+	{name: "green", text: "Green"},
+	{name: "blue", text: "Blue"},
+	{name: "yellow", text: "Yellow"},
+	{name: "violet", text: "Violet"},
+	{name: "stone", text: "Stone"},
+	{name: "zinc", text: "Zinc"},
+	{name: "neutral", text: "Neutral"},
+	{name: "gray", text: "Gray"},
+	{name: "slate", text: "Slate"},
+}
+
+templ Page(title string, user *account.User) {
+	{{ basePath := shared.GetBasePath(ctx) }}
+	{{ appURL := shared.GetAppURL(ctx) }}
+	<!DOCTYPE html>
+	<html lang="en" class="h-full bg-primary text-primary">
+		<head>
+			<meta charset="UTF-8"/>
+			<title>{ title }</title>
+			<link rel="icon" type="image/svg+xml" href={ basePath + "/dist/favicon.png" }/>
+			<meta name="viewport" content="width=device-width, initial-scale=1"/>
+			<meta name="robots" content="index, follow"/>
+			<meta name="revisit-after" content="7 days"/>
+			<meta name="language" content="English"/>
+			<!--
+		<script src="https://unpkg.com/htmx.org@1.9.2" integrity="sha384-L6OqL9pRWyyFU3+/bjdSri+iIphTN/bvYyM37tICVyOJkWZLpP2vGn6VUEXgzg6h" crossorigin="anonymous"></script>
+		<script src="https://unpkg.com/hyperscript.org@0.9.8"></script>
+		<script src="https://unpkg.com/sortablejs@1.15.0"></script>
+		<script src={ basePath + "/dist/js/app.js" }></script>
+		-->
+			<link rel="stylesheet" href={ basePath + "/dist/styles.css" }/>
+			<script src={ basePath + "/dist/index.js" } defer></script>
+		</head>
+		<body class="h-full">
+			<div class="fixed z-50 w-full bg-sidebar text-sidebar-foreground top-0 left-0 h-16">
+				<div class="h-full flex justify-between items-center m-auto max-w-5xl">
+					<div class="flex gap-2">
+						<a href={ templ.SafeURL(basePath) } class="flex items-center gap-2 self-center font-medium">
+							<div class="flex h-6 w-6 items-center justify-center rounded-md bg-primary text-primary-foreground">
+								<svg xmlns="http://www.w3.org/2000/svg" class="size-4" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-gallery-vertical-end-icon lucide-gallery-vertical-end"><path d="M7 2h10"></path><path d="M5 6h14"></path><rect width="18" height="12" x="3" y="10" rx="2"></rect></svg>
+							</div>
+							GitClassrooms
+						</a>
+						if appURL != "" {
+							<a href={ templ.SafeURL(appURL) } class="flex items-center gap-2 self-center font-medium">
+								<div class="flex h-6 w-6 items-center justify-center rounded-md bg-primary text-primary-foreground">
+									<svg xmlns="http://www.w3.org/2000/svg" class="size-4" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-gallery-vertical-end-icon lucide-gallery-vertical-end"><path d="M7 2h10"></path><path d="M5 6h14"></path><rect width="18" height="12" x="3" y="10" rx="2"></rect></svg>
+								</div>
+								GitClassrooms App
+							</a>
+						}
+					</div>
+					<div class="flex gap-4">
+						<div class="relative">
+							<button id="change-theme" onclick="toggleDropdown(event)" class="btn-outline dropdown-button">Theme</button>
+							<div data-state="closed" class="dropdown-content hidden">
+								for _, theme := range themes {
+									<button class="btn-ghost justify-start w-full py-0" onclick={ templ.JSFuncCall("setTheme", theme.name) }>
+										{ theme.text }
+									</button>
+								}
+							</div>
+						</div>
+						<div class="relative">
+							<button id="change-mode" onclick="toggleDropdown(event)" class="btn-outline dropdown-button">Theme</button>
+							<div data-state="closed" class="dropdown-content z-10 hidden">
+								<button class="btn-ghost justify-start w-full py-0" onclick="setMode('light')">Ligth</button>
+								<button class="btn-ghost justify-start w-full py-0" onclick="setMode('dark')">Dark</button>
+								<button class="btn-ghost justify-start w-full py-0" onclick="setMode('system')">System</button>
+							</div>
+						</div>
+						if user != nil {
+							<div class="relative">
+								<li onclick="toggleDropdown(event)" class="avatar dropdown-button">
+									<img onerror="this.parentNode.innerHTML=`<div class='avatar-fallback text-primary-foreground dropdown-button'>TT</div>`" class="avatar-image dropdown-button" src={ user.Picture }/>
+								</li>
+								<div data-state="closed" class="dropdown-content hidden">
+									<p class="py-2 px-4 text-sm font-bold">{ "@" + user.Username }</p>
+									<a href={ templ.SafeURL(basePath + "/logout") } class="btn-ghost justify-start w-full py-0">Logout</a>
+								</div>
+							</div>
+						}
+					</div>
+				</div>
+			</div>
+			<div class="fixed empty:hidden bg-sidebar top-16 left-[50%] translate-x-[-50%] z-40 p-2 rounded-b-xl w-full max-w-3xl flex flex-col gap-2">
+				// for i := range 5 {
+				//	@components.ToastMessage(components.ToastVariantError, "Error"+strconv.Itoa(i))
+				//}
+			</div>
+			<div class="min-h-svh pt-22 md:pt-26 flex flex-col items-center gap-6 bg-muted px-6 md:px-10">
+				{ children... }
+			</div>
+			<script>
+			// Dropdown Script
+			function toggleDropdown(e) {
+				const elem = e.currentTarget.parentNode.querySelector(".dropdown-content")
+				if (elem.dataset.state === "closed") {
+					elem.classList.remove("hidden");
+					elem.dataset.state = "open"
+				} else {
+					elem.dataset.state = "closed"
+					setTimeout(() => elem.classList.add("hidden"), 100);
+				}
+			}
+
+			window.addEventListener("click", (event) => {
+			  if (!event.target.matches(".dropdown-button")) {
+			    document.querySelectorAll(".dropdown-content").forEach(d => {
+					d.dataset.state = "closed"
+					setTimeout(() => d.classList.add("hidden"), 100);
+				});
+			  }
+			})
+			</script>
+			<script>
+			// New Modal Script
+			function openModal(e) {
+				const modal = e.currentTarget.nextSibling
+				if (modal.dataset.state === "closed") {
+					modal.dataset.state = "open"
+					modal.querySelector(".modal-content").dataset.state = "open"
+					modal.classList.remove("hidden")
+					document.body.dataset.modal="open"
+				}
+			}
+
+			function closeModal() {
+				document.querySelectorAll(".modal").forEach((modal) => {
+					if (modal.dataset.state === "closed") return
+					modal.dataset.state = "closed"
+					modal.querySelector(".modal-content").dataset.state = "closed"
+					setTimeout(() => modal.classList.add("hidden"), 100)
+					document.body.dataset.modal=""
+				})
+			}
+
+			window.addEventListener('click', event => {
+				if (event.target.classList.contains('modal')) {
+					closeModal()
+				}
+			});
+
+			window.addEventListener('keydown', event => {
+				if (event.key === "Escape" && document.body.dataset.modal == "open") {
+					closeModal()
+				}
+			});
+			</script>
+		</body>
+	</html>
+}

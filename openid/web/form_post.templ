@@ -1,0 +1,85 @@
+package web
+
+import (
+	"fmt"
+	"net/url"
+	"strconv"
+	"time"
+)
+
+const RedirectWait = 0 * time.Second
+
+templ FormPost(redirectURI string, params url.Values, flashMessages ...templ.Component) {
+	{{
+	redirectWait := RedirectWait
+	if len(flashMessages) > 0 {
+		redirectWait += 10 * time.Second
+	}
+	}}
+	<!DOCTYPE html>
+	<html>
+		<head>
+			<meta charset="UTF-8"/>
+		</head>
+		<body onload={ templ.JSUnsafeFuncCall(fmt.Sprintf("setTimeout(()=>document.forms[0].submit(),%d)", redirectWait/time.Millisecond)) }>
+			for _, message := range flashMessages {
+				@message
+			}
+			Redirecting to
+			<a href={ templ.SafeURL(redirectURI) }>
+				{ redirectURI }
+			</a>
+			<form method="post" action={ templ.SafeURL(redirectURI) }>
+				if v, ok := params["state"]; ok && len(v) > 0 {
+					<input type="hidden" name="state" value={ v[0] }/>
+				}
+				if v, ok := params["code"]; ok && len(v) > 0 {
+					<input type="hidden" name="code" value={ v[0] }/>
+				}
+				if v, ok := params["id_token"]; ok && len(v) > 0 {
+					<input type="hidden" name="id_token" value={ v[0] }/>
+				}
+				if v, ok := params["access_token"]; ok && len(v) > 0 {
+					<input type="hidden" name="access_token" value={ v[0] }/>
+				}
+				if v, ok := params["expires_in"]; ok && len(v) > 0 {
+					<input type="hidden" name="expires_in" value={ v[0] }/>
+				}
+				if v, ok := params["refresh_token"]; ok && len(v) > 0 {
+					<input type="hidden" name="refresh_token" value={ v[0] }/>
+				}
+				if v, ok := params["refresh_expires_in"]; ok && len(v) > 0 {
+					<input type="hidden" name="refresh_expires_in" value={ v[0] }/>
+				}
+				if v, ok := params["token_type"]; ok && len(v) > 0 {
+					<input type="hidden" name="token_type" value={ v[0] }/>
+				}
+			</form>
+		</body>
+	</html>
+}
+
+templ FormRedirect(redirectURI string, flashMessages ...templ.Component) {
+	{{
+	redirectWait := RedirectWait
+	if len(flashMessages) > 0 {
+		redirectWait += 10 * time.Second
+	}
+	}}
+	<!DOCTYPE html>
+	<html>
+		<head>
+			<meta charset="UTF-8"/>
+			<meta http-equiv="refresh" content={ strconv.Itoa(int(RedirectWait/time.Second)) + ";url=" + redirectURI }/>
+		</head>
+		<body>
+			for _, message := range flashMessages {
+				@message
+			}
+			Redirecting to
+			<a href={ templ.SafeURL(redirectURI) }>
+				{ redirectURI }
+			</a>
+		</body>
+	</html>
+}

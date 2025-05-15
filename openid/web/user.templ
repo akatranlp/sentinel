@@ -1,0 +1,96 @@
+package web
+
+import "github.com/akatranlp/sentinel/openid/web/shared"
+import "github.com/akatranlp/sentinel/openid/web/components"
+import "github.com/akatranlp/sentinel/account"
+import "slices"
+
+type LinkProvider struct {
+	Name   string
+	Slug   string
+	Icon   string
+	Linked bool
+}
+
+templ User(user account.User, providers []LinkProvider, accounts []account.Account, csrfFieldName, csrfToken, redirect string) {
+	{{ basePath := shared.GetBasePath(ctx) }}
+	@Page("User", &user) {
+		<div class="flex w-full max-w-lg flex-col gap-6">
+			<div class="flex flex-col gap-6">
+				<div class="card">
+					<div class="card-header text-center">
+						<div class="card-title text-xl">
+							User Page
+						</div>
+					</div>
+					<div class="card-content">
+						<div class="flex flex-col gap-6">
+							<div class="grid gap-2 grid-cols-1 md:grid-cols-2">
+								{{
+										accIdx := slices.IndexFunc(accounts, func(a account.Account) bool { return a.Picture == user.Picture })
+										acc := accounts[accIdx]
+										_ = acc
+								}}
+								<img class="size-32 row-span-3 rounded-full self-center justify-self-center" alt="Profile-picture" src={ user.Picture }/>
+								<input class="input" disabled value={ user.Name }/>
+								<input class="input" disabled value={ user.Username }/>
+								<input class="input" type="email" disabled value={ user.Email }/>
+								<a class="col-start-2 btn-outline" href={ templ.SafeURL(basePath + "/user/edit") }>Edit</a>
+							</div>
+							<div class="flex flex-col gap-4">
+								for _, p := range providers {
+									{{
+											action := "login"
+											actionName := "Link"
+											if p.Linked {
+												action = "unlink"
+												actionName = "Unlink"
+											}
+									}}
+									<form method="POST" action={ templ.SafeURL(basePath + "/" + p.Slug + "/" + action) } class="w-full">
+										<input type="hidden" name="redirect" value={ redirect }/>
+										<input type="hidden" name={ csrfFieldName } value={ csrfToken }/>
+										<button
+											type="button"
+											onclick="openModal(event)"
+											class="btn-outline w-full"
+										>
+											<span class="col-start-2">
+												if p.Icon == "gitlab" {
+													@components.GitLabIcon("h-[28px] w-[28px]")
+												} else if p.Icon == "github" {
+													@components.GitHubIcon("h-[28px] w-[28px]")
+												} else if p.Icon == "gitea" {
+													@components.GiteaIcon("h-[28px] w-[28px]")
+												}
+											</span>
+											<p class="col-start-3">
+												{ actionName } with { p.Name }
+											</p>
+										</button>
+										<div data-state="closed" class="modal hidden">
+											<div data-state="closed" class="modal-content">
+												<div class="modal-header">
+													<div class="modal-title">
+														Are you absolutely sure?
+													</div>
+													<div class="modal-description">
+														This action cannot be undone.
+													</div>
+												</div>
+												<div class="modal-footer">
+													<button type="button" class="btn-outline mt-2 sm:mt-0" onclick="closeModal()">Cancel</button>
+													<button type="submit" class="btn-primary">{ actionName }</button>
+												</div>
+											</div>
+										</div>
+									</form>
+								}
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	}
+}

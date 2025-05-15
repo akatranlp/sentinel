@@ -1,0 +1,12 @@
+package web
+
+import "github.com/akatranlp/sentinel/openid/web/shared"
+
+templ Unimplemented(value string) {
+	{{ path := shared.GetURLPath(ctx) }}
+	@Page("Unimplemented", nil) {
+		<h1 class="text-5xl">Unimplemented</h1>
+		<h2 class="text-2xl">{ path }</h2>
+		<pre>{ value }</pre>
+	}
+}

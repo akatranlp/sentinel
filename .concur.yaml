@@ -1,0 +1,32 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/akatranlp/concur/refs/heads/main/config.schema.json
+
+prefix:
+  template: "{{.Time}} {{.Padding}}{{.Name}}"
+  padPrefix: true
+
+runBefore:
+  commands:
+    - command: make generate
+
+commands:
+  - command: go tool air
+    name: backend
+    color: "#fe8019"
+    bold: true
+  - command: make watch/tailwind
+    name: tailwind
+    color: "#8ec07c"
+    bold: true
+
+status:
+  enabled: true
+  printInterval: 200ms
+  checks:
+    - type: http
+      url: http://localhost:3000/health
+      interval: 200ms
+      template: |-
+        {{- if .Error }}{{ .Error }}{{ else -}}
+        {{ .URL }} -> {{ .StatusCode }} Status: {{ .Body }}
+        {{- end -}}
+
