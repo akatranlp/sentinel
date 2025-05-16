@@ -10,6 +10,7 @@ import (
 	"os"
 	"time"
 
+	"embed"
 	usermemorystore "github.com/akatranlp/sentinel/account/memory_store"
 	"github.com/akatranlp/sentinel/openid"
 	"github.com/akatranlp/sentinel/openid/enums"
@@ -18,6 +19,9 @@ import (
 	"github.com/alexedwards/scs/v2/memstore"
 	"github.com/lestrrat-go/jwx/v3/jwk"
 )
+
+//go:embed *.svg
+var customAssets embed.FS
 
 func GetOrCreateKey() (io.ReadCloser, error) {
 	f, err := os.Open("examples/basic/jwk.json")
@@ -95,6 +99,7 @@ func main() {
 		openid.WithSessionUnAuthedLifeTime(10*time.Hour),
 		openid.WithSessionAuthedLifeTime(30*24*time.Hour),
 		openid.WithSigningKeyReader(f),
+		openid.WithCustomAssetFS(customAssets),
 	)
 	if err != nil {
 		panic(err)

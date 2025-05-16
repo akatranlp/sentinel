@@ -6,9 +6,10 @@ import (
 )
 
 type Provider struct {
-	Name string
-	Slug string
-	Icon string
+	Name    string
+	Slug    string
+	Icon    string
+	IconURL string
 }
 
 templ Login(providers []Provider, csrfFieldName, csrfToken, redirect string) {
@@ -51,6 +52,8 @@ templ Login(providers []Provider, csrfFieldName, csrfToken, redirect string) {
 													@components.GitHubIcon("size-6")
 												} else if v.Icon == "gitea" {
 													@components.GiteaIcon("size-6")
+												} else {
+													<img class="size-6" src={ v.IconURL }/>
 												}
 											</span>
 											<p>Login with { v.Name }</p>

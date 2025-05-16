@@ -20,6 +20,8 @@ const (
 	ProviderTypeGitea ProviderType = "gitea"
 	// ProviderTypeKeycloak is a ProviderType of type keycloak.
 	ProviderTypeKeycloak ProviderType = "keycloak"
+	// ProviderTypeUnknown is a ProviderType of type unknown.
+	ProviderTypeUnknown ProviderType = "unknown"
 )
 
 var ErrInvalidProviderType = errors.New("not a valid ProviderType")
@@ -41,6 +43,7 @@ var _ProviderTypeValue = map[string]ProviderType{
 	"github":   ProviderTypeGithub,
 	"gitea":    ProviderTypeGitea,
 	"keycloak": ProviderTypeKeycloak,
+	"unknown":  ProviderTypeUnknown,
 }
 
 // ParseProviderType attempts to convert a string to a ProviderType.

@@ -19,7 +19,7 @@ import (
 	"golang.org/x/oauth2/github"
 )
 
-// ENUM(gitlab, github, gitea, keycloak)
+// ENUM(gitlab, github, gitea, keycloak, unknown)
 type ProviderType string
 
 type Provider interface {
@@ -29,6 +29,7 @@ type Provider interface {
 	RevokeRefreshToken(ctx context.Context, token string) error
 	RefreshToken(ctx context.Context, token *oauth2.Token) (*oauth2.Token, error)
 	GetType() ProviderType
+	GetIconURL() string
 
 	GetName() string
 	GetSlug() string
@@ -46,21 +47,22 @@ type OIDCProvider struct {
 	Provider     *oidc.Provider
 	Verifier     *oidc.IDTokenVerifier
 	Scopes       []string
+	IconURL      string
 }
 
 func NewGitLabProvider(name, slug, clientID, clientSecret, baseURL string) (*OIDCProvider, error) {
-	return NewOIDCProvider(name, slug, ProviderTypeGitlab, clientID, clientSecret, baseURL, []string{oidc.ScopeOpenID, "profile", "email", "api"})
+	return NewOIDCProvider(name, slug, ProviderTypeGitlab, clientID, clientSecret, baseURL, []string{oidc.ScopeOpenID, "profile", "email", "api"}, "")
 }
 
 func NewGiteaProvider(name, slug, clientID, clientSecret, baseURL string) (*OIDCProvider, error) {
-	return NewOIDCProvider(name, slug, ProviderTypeGitea, clientID, clientSecret, baseURL, []string{oidc.ScopeOpenID, "profile", "email"})
+	return NewOIDCProvider(name, slug, ProviderTypeGitea, clientID, clientSecret, baseURL, []string{oidc.ScopeOpenID, "profile", "email"}, "")
 }
 
-func NewKeycloakProvider(name, slug, clientID, clientSecret, baseURL string) (*OIDCProvider, error) {
-	return NewOIDCProvider(name, slug, ProviderTypeKeycloak, clientID, clientSecret, baseURL, []string{oidc.ScopeOpenID, "profile", "email", "offline_access"})
+func NewKeycloakProvider(name, slug, clientID, clientSecret, baseURL string, iconURL string) (*OIDCProvider, error) {
+	return NewOIDCProvider(name, slug, ProviderTypeKeycloak, clientID, clientSecret, baseURL, []string{oidc.ScopeOpenID, "profile", "email", "offline_access"}, iconURL)
 }
 
-func NewOIDCProvider(name, slug string, providerType ProviderType, clientID, clientSecret, baseURL string, scopes []string) (*OIDCProvider, error) {
+func NewOIDCProvider(name, slug string, providerType ProviderType, clientID, clientSecret, baseURL string, scopes []string, iconURL string) (*OIDCProvider, error) {
 	provider, err := oidc.NewProvider(context.TODO(), baseURL)
 	if err != nil {
 		return nil, err
@@ -80,12 +82,14 @@ func NewOIDCProvider(name, slug string, providerType ProviderType, clientID, cli
 		Provider:     provider,
 		Verifier:     provider.Verifier(&oidc.Config{ClientID: clientID}),
 		Scopes:       internalScopes,
+		IconURL:      iconURL,
 	}, nil
 }
 
 func (p *OIDCProvider) GetName() string       { return p.Name }
 func (p *OIDCProvider) GetSlug() string       { return p.Slug }
 func (p *OIDCProvider) GetType() ProviderType { return p.Type }
+func (p *OIDCProvider) GetIconURL() string    { return p.IconURL }
 
 func (p *OIDCProvider) RevokeRefreshToken(ctx context.Context, token string) error {
 	type providerClaims struct {
@@ -220,6 +224,7 @@ type OauthProvider struct {
 	Endpoint       oauth2.Endpoint
 	UserInfoGetter UserInfoGetter
 	Scopes         []string
+	IconURL        string
 }
 
 type UserInfoGetter = func(ctx context.Context, token oauth2.TokenSource) (*account.Account, error)
@@ -301,10 +306,10 @@ func githubUserInfoGetter(ctx context.Context, tokenSource oauth2.TokenSource) (
 }
 
 func NewGitHubProvider(name, slug, clientID, clientSecret string) (*OauthProvider, error) {
-	return NewOauthProvider(name, slug, ProviderTypeGithub, clientID, clientSecret, github.Endpoint, []string{"profile", "email"}, githubUserInfoGetter)
+	return NewOauthProvider(name, slug, ProviderTypeGithub, clientID, clientSecret, github.Endpoint, []string{"profile", "email"}, "", githubUserInfoGetter)
 }
 
-func NewOauthProvider(name, slug string, providerType ProviderType, clientID, clientSecret string, endpoint oauth2.Endpoint, scopes []string, userInfoGetter UserInfoGetter) (*OauthProvider, error) {
+func NewOauthProvider(name, slug string, providerType ProviderType, clientID, clientSecret string, endpoint oauth2.Endpoint, scopes []string, iconURL string, userInfoGetter UserInfoGetter) (*OauthProvider, error) {
 	internalScopes := make([]string, len(scopes))
 	copy(internalScopes, scopes)
 
@@ -317,12 +322,14 @@ func NewOauthProvider(name, slug string, providerType ProviderType, clientID, cl
 		Endpoint:       endpoint,
 		UserInfoGetter: userInfoGetter,
 		Scopes:         internalScopes,
+		IconURL:        iconURL,
 	}, nil
 }
 
 func (p *OauthProvider) GetName() string       { return p.Name }
 func (p *OauthProvider) GetSlug() string       { return p.Slug }
 func (p *OauthProvider) GetType() ProviderType { return p.Type }
+func (p *OauthProvider) GetIconURL() string    { return p.IconURL }
 
 func (p *OauthProvider) RevokeRefreshToken(ctx context.Context, token string) error { return nil }
 
@@ -355,6 +362,7 @@ type FactoryParams struct {
 	Name         string
 	Slug         string
 	BaseURL      string
+	IconURL      string
 	ClientID     string
 	ClientSecret string
 }
@@ -368,7 +376,7 @@ func ProviderFactory(params FactoryParams) (Provider, error) {
 	case "gitlab":
 		return NewGitLabProvider(params.Name, params.Slug, params.ClientID, params.ClientSecret, params.BaseURL)
 	case "keycloak":
-		return NewKeycloakProvider(params.Name, params.Slug, params.ClientID, params.ClientSecret, params.BaseURL)
+		return NewKeycloakProvider(params.Name, params.Slug, params.ClientID, params.ClientSecret, params.BaseURL, params.IconURL)
 	default:
 		return nil, errors.New("no valid provider type")
 	}

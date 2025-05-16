@@ -2,6 +2,7 @@ package openid
 
 import (
 	"io"
+	"io/fs"
 	"sync"
 	"time"
 
@@ -37,7 +38,8 @@ type ipConfig struct {
 	signingKeyReader io.Reader
 
 	// Web
-	appURL string
+	appURL       string
+	customAssets fs.FS
 }
 
 var defaultConfig = ipConfig{

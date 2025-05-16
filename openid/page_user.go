@@ -11,6 +11,7 @@ import (
 	"github.com/akatranlp/sentinel/openid/web"
 	"github.com/akatranlp/sentinel/provider"
 	csrf "github.com/akatranlp/sentinel/session/gorilla_csrf"
+	"github.com/akatranlp/sentinel/utils"
 )
 
 func (ip *identitiyProvider) UserPage(w http.ResponseWriter, r *http.Request) {
@@ -35,9 +36,10 @@ func (ip *identitiyProvider) UserPage(w http.ResponseWriter, r *http.Request) {
 
 	provs := slices.SortedFunc(its.Map21(maps.All(ip.providers), func(slug string, p provider.Provider) web.LinkProvider {
 		return web.LinkProvider{
-			Name: p.GetName(),
-			Slug: slug,
-			Icon: string(p.GetType()),
+			Name:    p.GetName(),
+			Slug:    slug,
+			Icon:    string(p.GetType()),
+			IconURL: utils.ParseIconURL(ip.basePath, p.GetIconURL()),
 			Linked: slices.ContainsFunc(accounts, func(acc account.Account) bool {
 				return acc.Provider == slug
 			}),

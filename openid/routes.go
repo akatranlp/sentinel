@@ -81,6 +81,9 @@ func (ip *identitiyProvider) Handler() http.Handler {
 		r.Post("/user/edit", ip.UserEdit)
 	})
 
+	if ip.customAssets != nil {
+		r.Handle("/dist/custom/*", http.StripPrefix(ip.basePath+"/dist/custom", http.FileServerFS(ip.customAssets)))
+	}
 	r.Handle("/dist/*", http.StripPrefix(ip.basePath+"/", http.FileServerFS(assets.Assets)))
 
 	r.Route("/oauth", func(r chi.Router) {

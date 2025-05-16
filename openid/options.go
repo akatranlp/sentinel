@@ -2,6 +2,7 @@ package openid
 
 import (
 	"io"
+	"io/fs"
 	"time"
 
 	"github.com/akatranlp/sentinel/provider"
@@ -98,6 +99,13 @@ func WithSigningKeyReader(r io.Reader) OptionFn {
 func WithAppURL(appURL string) OptionFn {
 	return func(ic *ipConfig) error {
 		ic.appURL = appURL
+		return nil
+	}
+}
+
+func WithCustomAssetFS(fs fs.FS) OptionFn {
+	return func(ic *ipConfig) error {
+		ic.customAssets = fs
 		return nil
 	}
 }

@@ -13,6 +13,7 @@ type ProviderConfig struct {
 	Slug         string `json:"slug"`
 	ClientID     string `json:"client_id"`
 	ClientSecret string `json:"client_secret"`
+	IconURL      string `json:"icon_url"`
 	BaseURL      string `json:"base_url"`
 }
 
@@ -34,6 +35,7 @@ func InitProviders() ([]provider.Provider, error) {
 			Name:         cfg.Name,
 			Slug:         cfg.Slug,
 			BaseURL:      cfg.BaseURL,
+			IconURL:      cfg.IconURL,
 			ClientID:     cfg.ClientID,
 			ClientSecret: cfg.ClientSecret,
 			Type:         cfg.Type,

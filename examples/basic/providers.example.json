@@ -27,6 +27,7 @@
     "slug": "keycloak",
     "type": "keycloak",
     "base_url": "https://<keycloak-url>/realms/<realm>",
+    "icon_url": "icon.svg",
     "client_id": "",
     "client_secret": ""
   }

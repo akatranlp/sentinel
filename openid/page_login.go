@@ -10,6 +10,7 @@ import (
 	"github.com/akatranlp/sentinel/openid/web"
 	"github.com/akatranlp/sentinel/provider"
 	csrf "github.com/akatranlp/sentinel/session/gorilla_csrf"
+	"github.com/akatranlp/sentinel/utils"
 )
 
 func (ip *identitiyProvider) LoginPage(w http.ResponseWriter, r *http.Request) {
@@ -20,9 +21,10 @@ func (ip *identitiyProvider) LoginPage(w http.ResponseWriter, r *http.Request) {
 
 	provs := slices.SortedFunc(its.Map21(maps.All(ip.providers), func(slug string, p provider.Provider) web.Provider {
 		return web.Provider{
-			Name: p.GetName(),
-			Slug: slug,
-			Icon: string(p.GetType()),
+			Name:    p.GetName(),
+			Slug:    slug,
+			Icon:    string(p.GetType()),
+			IconURL: utils.ParseIconURL(ip.basePath, p.GetIconURL()),
 		}
 	}), func(a, b web.Provider) int {
 		return strings.Compare(a.Slug, b.Slug)
