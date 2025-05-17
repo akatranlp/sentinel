@@ -71,7 +71,10 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	tokenStore := tokenmemorystore.NewMemoryTokenStore()
+	tokenStore, err := tokenmemorystore.NewMemoryTokenStore("examples/basic/tokens.json")
+	if err != nil {
+		panic(err)
+	}
 
 	tokenStore.StartSessionCleanup(ctx)
 
