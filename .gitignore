@@ -3,3 +3,4 @@ bin
 providers.json
 node_modules
 jwk.json
+examples/basic/users.json

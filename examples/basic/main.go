@@ -67,7 +67,10 @@ func main() {
 		panic(err)
 	}
 
-	userStore := usermemorystore.NewMemoryUserStore()
+	userStore, err := usermemorystore.NewMemoryUserStore("examples/basic/users.json")
+	if err != nil {
+		panic(err)
+	}
 	tokenStore := tokenmemorystore.NewMemoryTokenStore()
 
 	tokenStore.StartSessionCleanup(ctx)
