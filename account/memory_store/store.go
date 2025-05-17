@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"maps"
+	"os"
 	"slices"
 
 	"github.com/akatranlp/go-pkg/its"
@@ -14,25 +15,71 @@ import (
 type MemoryUserStore struct {
 	accounts map[account.AccountID]account.Account
 	users    map[account.UserID]account.User
+	savePath string
+}
+
+type marshal struct {
+	Accounts []account.Account `json:"accounts"`
+	Users    []account.User    `json:"users"`
 }
 
 func (s *MemoryUserStore) MarshalJSON() ([]byte, error) {
 	accounts := slices.Collect(maps.Values(s.accounts))
 	users := slices.Collect(maps.Values(s.users))
 
-	return json.Marshal(map[string]any{
-		"accounts": accounts,
-		"users":    users,
+	return json.Marshal(marshal{
+		Accounts: accounts,
+		Users:    users,
 	})
+}
+
+func (s *MemoryUserStore) UnmarshalJSON(data []byte) error {
+	var store marshal
+
+	if err := json.Unmarshal(data, &store); err != nil {
+		return err
+	}
+
+	accounts := maps.Collect(its.Map12(slices.Values(store.Accounts), func(acc account.Account) (account.AccountID, account.Account) {
+		return acc.AccountID, acc
+	}))
+
+	users := maps.Collect(its.Map12(slices.Values(store.Users), func(u account.User) (account.UserID, account.User) {
+		return u.UserID, u
+	}))
+
+	*s = MemoryUserStore{
+		accounts: accounts,
+		users:    users,
+	}
+	return nil
 }
 
 var _ (account.UserStore) = (*MemoryUserStore)(nil)
 
-func NewMemoryUserStore() *MemoryUserStore {
+func NewMemoryUserStore(filePath ...string) (*MemoryUserStore, error) {
+	var path string
+	if len(filePath) > 0 {
+		path = filePath[0]
+	}
+	if path != "" {
+		f, err := os.Open(path)
+		if err == nil {
+			defer f.Close()
+			var store MemoryUserStore
+			if err := json.NewDecoder(f).Decode(&store); err != nil {
+				return nil, err
+			}
+			store.savePath = path
+			return &store, nil
+		}
+	}
+
 	return &MemoryUserStore{
 		accounts: make(map[account.AccountID]account.Account),
 		users:    make(map[account.UserID]account.User),
-	}
+		savePath: path,
+	}, nil
 }
 
 func (s *MemoryUserStore) GetUserByID(ctx context.Context, id account.UserID) (account.User, error) {
@@ -97,6 +144,7 @@ func (s *MemoryUserStore) GetOrCreateUserFromAccount(ctx context.Context, acc ac
 	if oldAcc, ok := s.accounts[acc.AccountID]; ok {
 		acc.UserID = oldAcc.UserID
 		s.accounts[acc.AccountID] = acc
+		s.saveToFile()
 
 		user, ok := s.users[acc.UserID]
 		if !ok {
@@ -118,6 +166,8 @@ func (s *MemoryUserStore) GetOrCreateUserFromAccount(ctx context.Context, acc ac
 	s.accounts[acc.AccountID] = acc
 	s.users[user.UserID] = user
 
+	s.saveToFile()
+
 	return user, nil
 }
 
@@ -127,6 +177,7 @@ func (s *MemoryUserStore) UpdateUser(ctx context.Context, id account.UserID, use
 	}
 
 	s.users[user.UserID] = user
+	s.saveToFile()
 	return nil
 }
 
@@ -136,6 +187,7 @@ func (s *MemoryUserStore) UpdateAccount(ctx context.Context, id account.AccountI
 	}
 
 	s.accounts[acc.AccountID] = acc
+	s.saveToFile()
 	return nil
 }
 
@@ -150,6 +202,7 @@ func (s *MemoryUserStore) LinkAccount(ctx context.Context, id account.UserID, ac
 
 	acc.UserID = id
 	s.accounts[acc.AccountID] = acc
+	s.saveToFile()
 	return nil
 }
 
@@ -202,6 +255,20 @@ func (s *MemoryUserStore) UnLinkAccount(ctx context.Context, id account.UserID, 
 	if userNeedsUpdate {
 		s.users[id] = user
 	}
+	s.saveToFile()
 
 	return nil
+}
+
+func (s *MemoryUserStore) saveToFile() error {
+	if s.savePath == "" {
+		return nil
+	}
+	f, err := os.Create(s.savePath)
+	if err != nil {
+		return err
+	}
+	encoder := json.NewEncoder(f)
+	encoder.SetIndent("", "  ")
+	return encoder.Encode(s)
 }
