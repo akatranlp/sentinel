@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/json"
+	"fmt"
 	"os"
 
 	"github.com/akatranlp/sentinel/provider"
@@ -15,6 +16,7 @@ type ProviderConfig struct {
 	ClientSecret string `json:"client_secret"`
 	IconURL      string `json:"icon_url"`
 	BaseURL      string `json:"base_url"`
+	Enabled      bool   `json:"enabled"`
 }
 
 func InitProviders() ([]provider.Provider, error) {
@@ -31,6 +33,9 @@ func InitProviders() ([]provider.Provider, error) {
 	var providers []provider.Provider
 
 	for _, cfg := range pCfgs {
+		if !cfg.Enabled {
+			continue
+		}
 		provider, err := provider.ProviderFactory(provider.FactoryParams{
 			Name:         cfg.Name,
 			Slug:         cfg.Slug,
@@ -41,6 +46,7 @@ func InitProviders() ([]provider.Provider, error) {
 			Type:         cfg.Type,
 		})
 		if err != nil {
+			fmt.Printf("error while initializing provider %s of type %s. Error: %v\n", cfg.Name, cfg.Type, err)
 			return nil, err
 		}
 		providers = append(providers, provider)

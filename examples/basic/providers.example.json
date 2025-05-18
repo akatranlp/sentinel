@@ -5,7 +5,8 @@
     "type": "gitea",
     "base_url": "https://gitea.com/",
     "client_id": "",
-    "client_secret": ""
+    "client_secret": "",
+    "enabled": true
   },
   {
     "name": "GitLab",
@@ -13,14 +14,16 @@
     "type": "gitlab",
     "base_url": "https://gitlab.com",
     "client_id": "",
-    "client_secret": ""
+    "client_secret": "",
+    "enabled": true
   },
   {
     "name": "GitHub",
     "slug": "github",
     "type": "github",
     "client_id": "",
-    "client_secret": ""
+    "client_secret": "",
+    "enabled": true
   },
   {
     "name": "KeyCloak",
