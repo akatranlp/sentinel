@@ -14,9 +14,9 @@ import (
 	usermemorystore "github.com/akatranlp/sentinel/account/memory_store"
 	"github.com/akatranlp/sentinel/openid"
 	"github.com/akatranlp/sentinel/openid/enums"
+	sessionmemorystore "github.com/akatranlp/sentinel/session/memory_store"
 	tokenmemorystore "github.com/akatranlp/sentinel/token/memory_store"
 	"github.com/akatranlp/sentinel/utils"
-	"github.com/alexedwards/scs/v2/memstore"
 	"github.com/lestrrat-go/jwx/v3/jwk"
 )
 
@@ -78,7 +78,10 @@ func main() {
 
 	tokenStore.StartSessionCleanup(ctx)
 
-	sessionStore := memstore.NewWithCleanupInterval(1 * time.Second)
+	sessionStore, err := sessionmemorystore.NewWithCleanupInterval(1*time.Second, "examples/basic/sessions.json")
+	if err != nil {
+		panic(err)
+	}
 
 	ip, err := openid.NewIdentityProvider(
 		"/",
