@@ -12,7 +12,13 @@ import (
 
 func (ip *identitiyProvider) StartServer(ctx context.Context, addr string) {
 	r := chi.NewRouter()
-	r.Mount(ip.basePath, ip.Handler())
+
+	basePath := ip.basePath
+	if basePath == "" {
+		basePath = "/"
+	}
+
+	r.Mount(basePath, ip.Handler())
 
 	if ip.basePath != "" {
 		r.Handle("/", http.RedirectHandler(ip.basePath, http.StatusTemporaryRedirect))
