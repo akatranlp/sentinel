@@ -2,7 +2,7 @@ tmp
 bin
 providers.json
 node_modules
-jwk.json
+examples/basic/jwk.json
 examples/basic/users.json
 examples/basic/tokens.json
 examples/basic/sessions.json

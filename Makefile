@@ -1,11 +1,4 @@
 MAKEFLAGS += --no-print-directory
-MAIN_PACKAGE_PATH := ./examples/basic/
-BINARY_NAME := identity-provider
-APP_VERSION ?= $(shell git describe --tags --always --dirty)
-APP_GIT_COMMIT ?= $(shell git rev-parse HEAD)
-APP_GIT_BRANCH ?= $(shell git rev-parse --abbrev-ref HEAD)
-APP_GIT_REPOSITORY ?= https://github.com/git-classrooms/identity-provider
-APP_BUILD_TIME ?= $(shell date -u +'%Y-%m-%dT%H:%M:%SZ')
 
 .PHONY: help
 help:
@@ -13,8 +6,10 @@ help:
 	@echo ""
 	@echo "Targets:"
 	@echo "  generate                          Generate"
+	@echo "  examples/all                      Build all examples"
+	@echo "  examples/basic                    Build basic example"
+	@echo "  run/examples/basic                Run basic example"
 	@echo "  setup                             Install dependencies"
-	@echo "  setup/ci                          Install dependencies for CI"
 	@echo "  clean                             Clean"
 	@echo "  run/dev                           Run development environment"
 	@echo "  tidy                              Fmt and Tidy"
@@ -40,12 +35,6 @@ setup:
 	@yarn install
 	@go mod download
 
-.PHONY: setup/ci
-setup/ci:
-	@echo "Installing..."
-	@yarn install
-	@go mod download
-
 .PHONY: watch/tailwind
 watch/tailwind:
 	@echo "Executing tailwindcss..."
@@ -64,6 +53,19 @@ generate:
 	@echo "Generating code..."
 	@go generate ./...
 	@$(MAKE) build/tailwind
+
+.PHONY: examples/all
+examples/all: examples/basic
+
+.PHONY: examples/basic
+examples/basic: generate
+	@echo "Building Basic Example"
+	@go build -o ./bin/basic ./examples/basic
+
+.PHONY: run/examples/basic
+run/examples/basic: examples/basic
+	@echo "Running basic example"
+	./bin/basic
 
 .PHONY: tidy
 tidy:

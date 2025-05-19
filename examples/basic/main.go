@@ -5,12 +5,14 @@ import (
 	"crypto/rand"
 	"crypto/rsa"
 	"encoding/json"
+	"fmt"
 	"io"
 	"log"
 	"os"
 	"time"
 
 	"embed"
+
 	usermemorystore "github.com/akatranlp/sentinel/account/memory_store"
 	"github.com/akatranlp/sentinel/openid"
 	"github.com/akatranlp/sentinel/openid/enums"
@@ -62,6 +64,9 @@ func GetOrCreateKey() (io.ReadCloser, error) {
 func main() {
 	ctx := context.Background()
 
+	basePath := "/auth"
+	port := 3000
+
 	f, err := GetOrCreateKey()
 	if err != nil {
 		panic(err)
@@ -84,7 +89,7 @@ func main() {
 	}
 
 	ip, err := openid.NewIdentityProvider(
-		"/",
+		basePath,
 		userStore,
 		tokenStore,
 		sessionStore,
@@ -105,6 +110,7 @@ func main() {
 			},
 		}),
 		openid.WithProviders(utils.Must(InitProviders())...),
+		openid.WithSessionName("SE_EXB_SESSION_ID"),
 		openid.WithSessionUnAuthedLifeTime(10*time.Hour),
 		openid.WithSessionAuthedLifeTime(30*24*time.Hour),
 		openid.WithSigningKeyReader(f),
@@ -116,6 +122,6 @@ func main() {
 
 	f.Close()
 
-	log.Println("Listening on port 3000")
-	ip.StartServer(ctx, ":3000")
+	log.Printf("Listening on port %d on %s\n", port, basePath)
+	ip.StartServer(ctx, fmt.Sprintf(":%d", port))
 }

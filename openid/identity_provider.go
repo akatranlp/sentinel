@@ -19,9 +19,8 @@ type ipConfig struct {
 	// Clients
 	clients map[string]ClientRegistration
 
-	providers map[string]provider.Provider
-
 	// Provider
+	providers map[string]provider.Provider
 
 	// SessionManager
 	sessionName             string
