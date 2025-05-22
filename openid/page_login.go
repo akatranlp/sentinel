@@ -13,7 +13,7 @@ import (
 	"github.com/akatranlp/sentinel/utils"
 )
 
-func (ip *identitiyProvider) LoginPage(w http.ResponseWriter, r *http.Request) {
+func (ip *IdentitiyProvider) LoginPage(w http.ResponseWriter, r *http.Request) {
 	if ip.sessionManager.IsAuthed(r.Context()) {
 		http.Redirect(w, r, ip.basePath+"/", http.StatusTemporaryRedirect)
 		return

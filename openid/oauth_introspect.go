@@ -16,7 +16,7 @@ import (
 	"github.com/lestrrat-go/jwx/v3/jwt"
 )
 
-func (ip *identitiyProvider) OauthIntrospect(w http.ResponseWriter, r *http.Request) {
+func (ip *IdentitiyProvider) OauthIntrospect(w http.ResponseWriter, r *http.Request) {
 	if err := r.ParseForm(); err != nil {
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusBadRequest)

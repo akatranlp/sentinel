@@ -7,7 +7,7 @@ import (
 	"github.com/akatranlp/sentinel/account"
 )
 
-func (ip *identitiyProvider) ProviderUnlink(w http.ResponseWriter, r *http.Request) {
+func (ip *IdentitiyProvider) ProviderUnlink(w http.ResponseWriter, r *http.Request) {
 	provider := r.PathValue("provider")
 
 	_, ok := ip.providers[provider]

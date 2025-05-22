@@ -10,7 +10,7 @@ import (
 	"github.com/go-chi/chi/v5"
 )
 
-func (ip *identitiyProvider) StartServer(ctx context.Context, addr string) {
+func (ip *IdentitiyProvider) StartServer(ctx context.Context, addr string) {
 	r := chi.NewRouter()
 
 	basePath := ip.basePath

@@ -11,7 +11,7 @@ import (
 	"github.com/lestrrat-go/jwx/v3/jwt"
 )
 
-func (ip *identitiyProvider) OauthRevoke(w http.ResponseWriter, r *http.Request) {
+func (ip *IdentitiyProvider) OauthRevoke(w http.ResponseWriter, r *http.Request) {
 	if err := r.ParseForm(); err != nil {
 		ip.handleTokenError(w, r, &TokenError{
 			ErrorType:        TokenErrorTypeInvalidRequest,

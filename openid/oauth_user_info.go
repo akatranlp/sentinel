@@ -12,7 +12,7 @@ import (
 	"github.com/lestrrat-go/jwx/v3/jwt"
 )
 
-func (ip *identitiyProvider) OauthUserInfo(w http.ResponseWriter, r *http.Request) {
+func (ip *IdentitiyProvider) OauthUserInfo(w http.ResponseWriter, r *http.Request) {
 	j := jose.GetJose(r.Context())
 	token, err := jwt.ParseHeader(
 		r.Header, "Authorization",

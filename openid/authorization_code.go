@@ -13,7 +13,7 @@ type AuthTokenValues struct {
 	AuthTime time.Time
 }
 
-func (ip *identitiyProvider) createAuthToken(authReq AuthTokenValues) string {
+func (ip *IdentitiyProvider) createAuthToken(authReq AuthTokenValues) string {
 	code := uuid.NewString()
 	ip.authMap.Store(code, authReq)
 	time.AfterFunc(10*time.Second, func() {
@@ -22,7 +22,7 @@ func (ip *identitiyProvider) createAuthToken(authReq AuthTokenValues) string {
 	return code
 }
 
-func (ip *identitiyProvider) validateCode(code string) (AuthTokenValues, bool) {
+func (ip *IdentitiyProvider) validateCode(code string) (AuthTokenValues, bool) {
 	v, ok := ip.authMap.LoadAndDelete(code)
 	if !ok {
 		return AuthTokenValues{}, false

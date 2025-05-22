@@ -7,7 +7,7 @@ import (
 	"github.com/akatranlp/sentinel/jose"
 )
 
-func (ip *identitiyProvider) WellKnownOpenIDConfiguration(w http.ResponseWriter, r *http.Request) {
+func (ip *IdentitiyProvider) WellKnownOpenIDConfiguration(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	j := jose.GetJose(ctx)
 	openIDConfig := j.GetOpenIDConfiguration()

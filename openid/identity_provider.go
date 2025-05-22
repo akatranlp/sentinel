@@ -53,7 +53,7 @@ var defaultConfig = ipConfig{
 	sessionIdleTimout:       7 * 24 * time.Hour,
 }
 
-type identitiyProvider struct {
+type IdentitiyProvider struct {
 	ipConfig
 	joseBuilder    *jose.JoseBuilder
 	userStore      account.UserStore
@@ -68,7 +68,7 @@ func NewIdentityProvider(
 	tokenStore token.TokenStore,
 	sessionStore scs.Store,
 	opts ...OptionFn,
-) (*identitiyProvider, error) {
+) (*IdentitiyProvider, error) {
 	var err error
 	conf := defaultConfig
 	for _, opt := range opts {
@@ -110,7 +110,7 @@ func NewIdentityProvider(
 		session.WithIdleTimeout(conf.sessionIdleTimout),
 	)
 
-	return &identitiyProvider{
+	return &IdentitiyProvider{
 		ipConfig:       conf,
 		joseBuilder:    jb,
 		userStore:      userStore,
@@ -120,7 +120,7 @@ func NewIdentityProvider(
 	}, nil
 }
 
-func (ip *identitiyProvider) PublicKeys() jwk.Set {
+func (ip *IdentitiyProvider) PublicKeys() jwk.Set {
 	jose, _ := ip.joseBuilder.Build("")
 	return jose.PublicKeys()
 }

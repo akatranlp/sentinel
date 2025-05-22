@@ -7,7 +7,7 @@ import (
 	csrf "github.com/akatranlp/sentinel/session/gorilla_csrf"
 )
 
-func (ip *identitiyProvider) LogoutPage(w http.ResponseWriter, r *http.Request) {
+func (ip *IdentitiyProvider) LogoutPage(w http.ResponseWriter, r *http.Request) {
 	if !ip.sessionManager.IsAuthed(r.Context()) {
 		http.Redirect(w, r, ip.basePath+"/login", http.StatusTemporaryRedirect)
 		return
@@ -16,7 +16,7 @@ func (ip *identitiyProvider) LogoutPage(w http.ResponseWriter, r *http.Request) 
 	web.Logout(ip.sessionManager.CsrfFormField(), csrf.Token(r), "", "").Render(r.Context(), w)
 }
 
-func (ip *identitiyProvider) Logout(w http.ResponseWriter, r *http.Request) {
+func (ip *IdentitiyProvider) Logout(w http.ResponseWriter, r *http.Request) {
 	if !ip.sessionManager.IsAuthed(r.Context()) {
 		http.Redirect(w, r, ip.basePath+"/login", http.StatusFound)
 		return

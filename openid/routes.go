@@ -17,7 +17,7 @@ import (
 	"github.com/go-chi/cors"
 )
 
-func (ip *identitiyProvider) Handler() http.Handler {
+func (ip *IdentitiyProvider) Handler() http.Handler {
 	r := chi.NewRouter()
 
 	var corsMiddleware *cors.Cors

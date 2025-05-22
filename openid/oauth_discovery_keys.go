@@ -7,7 +7,7 @@ import (
 	"github.com/akatranlp/sentinel/jose"
 )
 
-func (ip *identitiyProvider) OauthDiscoveryKeys(w http.ResponseWriter, r *http.Request) {
+func (ip *IdentitiyProvider) OauthDiscoveryKeys(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	j := jose.GetJose(ctx)
 	keys := j.PublicKeys()

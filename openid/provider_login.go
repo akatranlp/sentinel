@@ -18,7 +18,7 @@ type oauthState struct {
 	State       string `json:"state"`
 }
 
-func (ip *identitiyProvider) ProviderLogin(w http.ResponseWriter, r *http.Request) {
+func (ip *IdentitiyProvider) ProviderLogin(w http.ResponseWriter, r *http.Request) {
 	provider := r.PathValue("provider")
 
 	p, ok := ip.providers[provider]

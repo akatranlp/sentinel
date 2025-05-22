@@ -15,7 +15,7 @@ import (
 	"github.com/go-viper/mapstructure/v2"
 )
 
-func (ip *identitiyProvider) OauthAuthorize(w http.ResponseWriter, r *http.Request) {
+func (ip *IdentitiyProvider) OauthAuthorize(w http.ResponseWriter, r *http.Request) {
 	var err error
 	if r.URL.Fragment != "" {
 		sendErrorPage(w, r, AuthorizeErrorTypeInvalidRequest.String(), "no fragment parameter allowed", http.StatusBadRequest)
@@ -116,7 +116,7 @@ func (ip *identitiyProvider) OauthAuthorize(w http.ResponseWriter, r *http.Reque
 	})
 }
 
-func (ip *identitiyProvider) sendAuthResponse(w http.ResponseWriter, r *http.Request, formValues AuthTokenValues, flashMessages ...templ.Component) {
+func (ip *IdentitiyProvider) sendAuthResponse(w http.ResponseWriter, r *http.Request, formValues AuthTokenValues, flashMessages ...templ.Component) {
 	redirectURL := *formValues.RedirectURI
 	params := make(url.Values)
 	if formValues.State != "" {

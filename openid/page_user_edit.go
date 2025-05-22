@@ -12,7 +12,7 @@ import (
 	csrf "github.com/akatranlp/sentinel/session/gorilla_csrf"
 )
 
-func (ip *identitiyProvider) UserEditPage(w http.ResponseWriter, r *http.Request) {
+func (ip *IdentitiyProvider) UserEditPage(w http.ResponseWriter, r *http.Request) {
 	if !ip.sessionManager.IsAuthed(r.Context()) {
 		http.Redirect(w, r, ip.basePath+"/login", http.StatusTemporaryRedirect)
 		return
@@ -37,7 +37,7 @@ func (ip *identitiyProvider) UserEditPage(w http.ResponseWriter, r *http.Request
 	web.UserEdit(user, accounts, ip.sessionManager.CsrfFormField(), csrf.Token(r), "/auth/").Render(r.Context(), w)
 }
 
-func (ip *identitiyProvider) UserEdit(w http.ResponseWriter, r *http.Request) {
+func (ip *IdentitiyProvider) UserEdit(w http.ResponseWriter, r *http.Request) {
 	if !ip.sessionManager.IsAuthed(r.Context()) {
 		http.Redirect(w, r, ip.basePath+"/login", http.StatusTemporaryRedirect)
 		return

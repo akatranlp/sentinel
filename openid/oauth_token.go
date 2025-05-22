@@ -23,7 +23,7 @@ import (
 	"golang.org/x/sync/singleflight"
 )
 
-func (ip *identitiyProvider) OauthToken(w http.ResponseWriter, r *http.Request) {
+func (ip *IdentitiyProvider) OauthToken(w http.ResponseWriter, r *http.Request) {
 	if err := r.ParseForm(); err != nil {
 		ip.handleTokenError(w, r, &TokenError{
 			ErrorType:        TokenErrorTypeInvalidRequest,
@@ -148,7 +148,7 @@ func (ip *identitiyProvider) OauthToken(w http.ResponseWriter, r *http.Request) 
 
 }
 
-func (ip *identitiyProvider) handleAuthorizationCode(ctx context.Context, authReq AuthTokenValues, tokenReq types.TokenRequest) (types.TokenResponse, *TokenError) {
+func (ip *IdentitiyProvider) handleAuthorizationCode(ctx context.Context, authReq AuthTokenValues, tokenReq types.TokenRequest) (types.TokenResponse, *TokenError) {
 	rURIStr := authReq.RedirectURI.String()
 	if authReq.ClientID != tokenReq.ClientID {
 		return types.TokenResponse{}, &TokenError{
@@ -245,7 +245,7 @@ func (ip *identitiyProvider) handleAuthorizationCode(ctx context.Context, authRe
 	}, nil
 }
 
-func (ip *identitiyProvider) handleTokenError(w http.ResponseWriter, r *http.Request, err *TokenError) {
+func (ip *IdentitiyProvider) handleTokenError(w http.ResponseWriter, r *http.Request, err *TokenError) {
 	jose := jose.GetJose(r.Context())
 
 	w.Header().Set("Cache-Control", "no-store")
@@ -268,7 +268,7 @@ func (ip *identitiyProvider) handleTokenError(w http.ResponseWriter, r *http.Req
 	json.NewEncoder(w).Encode(err)
 }
 
-func (ip *identitiyProvider) handleRefreshToken(ctx context.Context, req types.TokenRequest) (types.TokenResponse, *TokenError) {
+func (ip *IdentitiyProvider) handleRefreshToken(ctx context.Context, req types.TokenRequest) (types.TokenResponse, *TokenError) {
 	j := jose.GetJose(ctx)
 	parsedRefreshToken, err := jwt.ParseString(
 		req.RefreshToken,
@@ -366,7 +366,7 @@ func (ip *identitiyProvider) handleRefreshToken(ctx context.Context, req types.T
 	}, nil
 }
 
-func (ip *identitiyProvider) handleTokenExchange(ctx context.Context, req types.TokenRequest) (types.TokenResponse, *TokenError) {
+func (ip *IdentitiyProvider) handleTokenExchange(ctx context.Context, req types.TokenRequest) (types.TokenResponse, *TokenError) {
 	if req.RequestedTokenType != enums.OauthTokenTypeAccessToken || req.SubjectTokenType != enums.OauthTokenTypeAccessToken {
 		return types.TokenResponse{}, &TokenError{
 			ErrorType:        TokenErrorTypeInvalidGrant,
@@ -419,7 +419,7 @@ func (ip *identitiyProvider) handleTokenExchange(ctx context.Context, req types.
 
 var g singleflight.Group
 
-func (ip *identitiyProvider) refreshAccountToken(userID account.UserID) {
+func (ip *IdentitiyProvider) refreshAccountToken(userID account.UserID) {
 	_, err, _ := g.Do(string(userID), func() (any, error) {
 		ctx := context.Background()
 		accounts, err := ip.userStore.GetAccountsForUserID(ctx, userID)

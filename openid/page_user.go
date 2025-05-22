@@ -14,7 +14,7 @@ import (
 	"github.com/akatranlp/sentinel/utils"
 )
 
-func (ip *identitiyProvider) UserPage(w http.ResponseWriter, r *http.Request) {
+func (ip *IdentitiyProvider) UserPage(w http.ResponseWriter, r *http.Request) {
 	if !ip.sessionManager.IsAuthed(r.Context()) {
 		http.Redirect(w, r, ip.basePath+"/login", http.StatusTemporaryRedirect)
 		return

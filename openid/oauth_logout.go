@@ -17,7 +17,7 @@ import (
 	"github.com/lestrrat-go/jwx/v3/jwt/openid"
 )
 
-func (ip *identitiyProvider) OauthLogout(w http.ResponseWriter, r *http.Request) {
+func (ip *IdentitiyProvider) OauthLogout(w http.ResponseWriter, r *http.Request) {
 	// sess, err := c.GetAuthSession(r)
 	// if err != nil {
 	// 	// TODO: Send a nice frontend back
@@ -165,7 +165,7 @@ func (ip *identitiyProvider) OauthLogout(w http.ResponseWriter, r *http.Request)
 
 }
 
-func (ip *identitiyProvider) handleLogoutError(sessionID string, w http.ResponseWriter, r *http.Request, errMsg string, statusCode int) {
+func (ip *IdentitiyProvider) handleLogoutError(sessionID string, w http.ResponseWriter, r *http.Request, errMsg string, statusCode int) {
 	w.Header().Set("Cache-Control", "no-store")
 	w.Header().Set("Pragma", "no-cache")
 	w.WriteHeader(statusCode)

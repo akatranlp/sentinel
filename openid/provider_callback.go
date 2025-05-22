@@ -15,7 +15,7 @@ import (
 	"golang.org/x/oauth2"
 )
 
-func (ip *identitiyProvider) ProviderCallback(w http.ResponseWriter, r *http.Request) {
+func (ip *IdentitiyProvider) ProviderCallback(w http.ResponseWriter, r *http.Request) {
 	provider := r.PathValue("provider")
 
 	p, ok := ip.providers[provider]
