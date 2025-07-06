@@ -47,6 +47,15 @@ func (ip *IdentitiyProvider) Handler() http.Handler {
 	})
 
 	r.Use(middleware.Forwarded(0))
+	r.Use(func(next http.Handler) http.Handler {
+		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			proto := middleware.Proto(r)
+			if proto == "http" {
+				*r = *csrf.PlaintextHTTPRequest(r)
+			}
+			next.ServeHTTP(w, r)
+		})
+	})
 	// r.Use(chiMiddleware.Logger)
 	r.Use(func(h http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
