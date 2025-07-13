@@ -39,10 +39,9 @@ templ Login(providers []Provider, csrfFieldName, csrfToken, redirect string) {
 								for _, v := range providers {
 									<form
 										method="POST"
-										action={ templ.SafeURL(basePath + "/" + v.Slug + "/login") }
+										action={ templ.SafeURL(basePath + "/" + v.Slug + "/login" + "?redirect=" + redirect) }
 										class="w-full"
 									>
-										<input type="hidden" name="redirect" value={ redirect }/>
 										<input type="hidden" name={ csrfFieldName } value={ csrfToken }/>
 										<button type="submit" class="btn-outline w-full">
 											<span class="col-start-2">

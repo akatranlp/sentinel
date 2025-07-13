@@ -29,7 +29,7 @@ func (ip *IdentitiyProvider) ProviderLogin(w http.ResponseWriter, r *http.Reques
 	}
 
 	clientState := r.FormValue("state")
-	redirect := r.FormValue("redirect")
+	redirect := r.URL.Query().Get("redirect")
 
 	verifier := types.Verifier{
 		Verifier:    oauth2.GenerateVerifier(),
