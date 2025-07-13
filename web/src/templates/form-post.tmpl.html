@@ -1,0 +1,23 @@
+{{ define "form-post.tmpl" -}}
+{{ $global := . }}
+<!DOCTYPE html><html>
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    {{ template "context-load.tmpl" .SentinelCtx }}
+    {{ template "load-react.tmpl" .SentinelCtx }}
+</head>
+<body onload="setTimeout(()=>document.forms[0].submit(),{{ .RedirectWait }}* 1000)">
+    <div id="root"></div>
+    <form method="post" action="{{ .SentinelCtx.RedirectURL }}">
+    {{- range $it := iterValue -}}
+        {{ $state := index $global.Params $it -}}
+        {{- if gt (len $state) 0 }}
+            <input type="hidden" name="{{ $it }}" value="{{ index $state 0 }}" />
+        {{- end -}}
+    {{- end }}
+    </form>
+</body>
+</html>
+{{ end }}
+
