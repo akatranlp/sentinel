@@ -12,6 +12,7 @@ help:
 	@echo "  setup                             Install dependencies"
 	@echo "  clean                             Clean"
 	@echo "  run/dev                           Run development environment"
+	@echo "  dev/frontend                      Run frontend"
 	@echo "  tidy                              Fmt and Tidy"
 	@echo "  lint                              Lint"
 	@echo "  test                              Test"
@@ -23,6 +24,11 @@ help:
 run/dev:
 	@echo "Starting development environment..."
 	@go tool concur || true
+
+.PHONY: dev/frontend
+dev/frontend:
+	@echo "Starting development environment..."
+	@cd web && pnpm dev || true
 
 .PHONY: build/tailwind
 build/tailwind:
