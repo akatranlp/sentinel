@@ -103,9 +103,16 @@ func WithAppURL(appURL string) OptionFn {
 	}
 }
 
-func WithCustomAssetFS(fs fs.FS) OptionFn {
+func WithAssetFS(fs fs.FS) OptionFn {
 	return func(ic *ipConfig) error {
-		ic.customAssets = fs
+		ic.assetFS = fs
+		return nil
+	}
+}
+
+func WithTemplateFs(fs fs.FS) OptionFn {
+	return func(ic *ipConfig) error {
+		ic.templateFS = fs
 		return nil
 	}
 }

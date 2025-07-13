@@ -12,6 +12,7 @@ import (
 	"github.com/akatranlp/sentinel/openid/web/assets"
 	"github.com/akatranlp/sentinel/openid/web/shared"
 	csrf "github.com/akatranlp/sentinel/session/gorilla_csrf"
+
 	// chiMiddleware "github.com/go-chi/chi/middleware"
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/cors"
@@ -90,9 +91,7 @@ func (ip *IdentitiyProvider) Handler() http.Handler {
 		r.Post("/user/edit", ip.UserEdit)
 	})
 
-	if ip.customAssets != nil {
-		r.Handle("/dist/custom/*", http.StripPrefix(ip.basePath+"/dist/custom", http.FileServerFS(ip.customAssets)))
-	}
+	r.Handle("/assets/*", http.StripPrefix(ip.basePath+"/assets/", http.FileServerFS(ip.assetFS)))
 	r.Handle("/dist/*", http.StripPrefix(ip.basePath+"/", http.FileServerFS(assets.Assets)))
 
 	r.Route("/oauth", func(r chi.Router) {

@@ -1,8 +1,11 @@
 package openid
 
 import (
+	"html/template"
 	"io"
 	"io/fs"
+	"iter"
+	"slices"
 	"sync"
 	"time"
 
@@ -11,6 +14,7 @@ import (
 	"github.com/akatranlp/sentinel/provider"
 	"github.com/akatranlp/sentinel/session"
 	"github.com/akatranlp/sentinel/token"
+	"github.com/akatranlp/sentinel/web"
 	"github.com/alexedwards/scs/v2"
 	"github.com/lestrrat-go/jwx/v3/jwk"
 )
@@ -37,8 +41,9 @@ type ipConfig struct {
 	signingKeyReader io.Reader
 
 	// Web
-	appURL       string
-	customAssets fs.FS
+	appURL     string
+	assetFS    fs.FS
+	templateFS fs.FS
 }
 
 var defaultConfig = ipConfig{
@@ -51,6 +56,9 @@ var defaultConfig = ipConfig{
 	sessionUnAuthedLifeTime: 30 * time.Minute,
 	sessionAuthedLifeTime:   364 * 24 * time.Hour,
 	sessionIdleTimout:       7 * 24 * time.Hour,
+
+	templateFS: web.TemplateFS,
+	assetFS:    web.AssetFS,
 }
 
 type IdentitiyProvider struct {
@@ -60,6 +68,7 @@ type IdentitiyProvider struct {
 	tokenStore     token.TokenStore
 	sessionManager *session.SessionManager
 	authMap        sync.Map
+	templates      *template.Template
 }
 
 func NewIdentityProvider(
@@ -76,6 +85,16 @@ func NewIdentityProvider(
 		if err != nil {
 			return nil, err
 		}
+	}
+
+	templates, err := template.New("templates").Funcs(template.FuncMap{
+		"toJSDeclaration": web.ToJsDeclaration,
+		"iterValue": func() iter.Seq[web.TokenResponseField] {
+			return slices.Values(web.TokenResponseFieldValues())
+		},
+	}).ParseFS(web.TemplateFS, "*.tmpl.html")
+	if err != nil {
+		return nil, err
 	}
 
 	joseOpts := []jose.OptionFn{
@@ -117,6 +136,7 @@ func NewIdentityProvider(
 		tokenStore:     tokenStore,
 		sessionManager: sm,
 		authMap:        sync.Map{},
+		templates:      templates,
 	}, nil
 }
 

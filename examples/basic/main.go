@@ -114,7 +114,7 @@ func main() {
 		openid.WithSessionUnAuthedLifeTime(10*time.Hour),
 		openid.WithSessionAuthedLifeTime(30*24*time.Hour),
 		openid.WithSigningKeyReader(f),
-		openid.WithCustomAssetFS(customAssets),
+		// openid.WithAssetFS(customAssets),
 	)
 	if err != nil {
 		panic(err)
