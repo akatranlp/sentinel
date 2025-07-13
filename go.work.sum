@@ -38,6 +38,7 @@ github.com/aws/aws-sdk-go-v2/service/sso v1.22.4/go.mod h1:ooyCOXjvJEsUw7x+ZDHeI
 github.com/aws/aws-sdk-go-v2/service/ssooidc v1.26.4/go.mod h1:0oxfLkpz3rQ/CHlx5hB7H69YUpFiI1tql6Q6Ne+1bCw=
 github.com/aws/aws-sdk-go-v2/service/sts v1.30.3/go.mod h1:zwySh8fpFyXp9yOr/KVzxOl8SRqgf/IDw5aUt9UKFcQ=
 github.com/aws/smithy-go v1.22.2/go.mod h1:irrKGvNn1InZwb2d7fkIRNucdfwR8R+Ts3wxYa/cJHg=
+github.com/bep/godartsass v1.2.0 h1:E2VvQrxAHAFwbjyOIExAMmogTItSKodoKuijNrGm5yU=
 github.com/bep/godartsass v1.2.0/go.mod h1:6LvK9RftsXMxGfsA0LDV12AGc4Jylnu6NgHL+Q5/pE8=
 github.com/bep/helpers v0.5.0/go.mod h1:dSqCzIvHbzsk5YOesp1M7sKAq5xUcvANsRoKdawxH4Q=
 github.com/bep/mclib v1.20400.20402/go.mod h1:pkrk9Kyfqg34Uj6XlDq9tdEFJBiL1FvCoCgVKRzw1EY=
