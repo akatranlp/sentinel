@@ -13,7 +13,7 @@ type TokenResponseField string
 // ENUM(info, success, error, warning)
 type MessageType string
 
-// ENUM(login.tmpl, error.tmpl, info.tmpl, form-redirect.tmpl, form-post.tmpl)
+// ENUM(login.tmpl, error.tmpl, info.tmpl, form-redirect.tmpl, form-post.tmpl, user.tmpl, user-edit.tmpl)
 type PageID string
 
 func ToJsDeclaration(v any, indent int) (template.JS, error) {
@@ -36,6 +36,14 @@ type URLs struct {
 	ResourcePath string `json:"resourcePath"`
 }
 
+type User struct {
+	ID       string `json:"id"`
+	Name     string `json:"name"`
+	Username string `json:"username"`
+	Picture  string `json:"picture"`
+	Email    string `json:"email"`
+}
+
 // type Client struct {
 // 	ClientID string `json:"clientId"`
 // 	Name     string `json:"name"`
@@ -46,6 +54,7 @@ type SentinelCtx struct {
 	Message  *Message  `json:"message"`
 	Messages []Message `json:"messages"`
 	URLs     URLs      `json:"urls"`
+	User     *User     `json:"user"`
 	// Client   Client    `json:"client"`
 }
 
@@ -66,6 +75,7 @@ type Provider struct {
 	ProviderID  string `json:"providerId"`
 	DisplayName string `json:"displayName"`
 	IconPath    string `json:"icon"`
+	IsLinked    bool   `json:"isLinked"`
 }
 
 type CSRF struct {
@@ -139,5 +149,51 @@ func NewErrorSentinelCtx(sentinelCtx SentinelCtx, message Message) ErrorSentinel
 	return ErrorSentinelCtx{
 		SentinelCtx: sentinelCtx,
 		Message:     message,
+	}
+}
+
+type Account struct {
+	Provider string `json:"provider"`
+	Email    string `json:"email"`
+	Name     string `json:"name"`
+	Username string `json:"username"`
+	Picture  string `json:"picture"`
+}
+
+type UserSentinelCtx struct {
+	SentinelCtx
+	User      User       `json:"user"`
+	Accounts  []Account  `json:"accounts"`
+	Providers []Provider `json:"providers"`
+	CSRF      CSRF       `json:"csrf"`
+}
+
+func NewUserSentinelCtx(sentinelCtx SentinelCtx, user User, accounts []Account, providers []Provider, csrf CSRF) UserSentinelCtx {
+	sentinelCtx.PageID = "user.tmpl"
+	return UserSentinelCtx{
+		SentinelCtx: sentinelCtx,
+		User:        user,
+		Accounts:    accounts,
+		Providers:   providers,
+		CSRF:        csrf,
+	}
+}
+
+type UserEditSentinelCtx struct {
+	SentinelCtx
+	User      User       `json:"user"`
+	Accounts  []Account  `json:"accounts"`
+	Providers []Provider `json:"providers"`
+	CSRF      CSRF       `json:"csrf"`
+}
+
+func NewUserEditSentinelCtx(sentinelCtx SentinelCtx, user User, accounts []Account, providers []Provider, csrf CSRF) UserEditSentinelCtx {
+	sentinelCtx.PageID = "user-edit.tmpl"
+	return UserEditSentinelCtx{
+		SentinelCtx: sentinelCtx,
+		User:        user,
+		Accounts:    accounts,
+		Providers:   providers,
+		CSRF:        csrf,
 	}
 }

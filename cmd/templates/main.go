@@ -7,8 +7,10 @@ import (
 	"fmt"
 	"io"
 	"log"
+	"maps"
 	"os"
 	"reflect"
+	"slices"
 	"strings"
 
 	"github.com/akatranlp/sentinel/openid/types"
@@ -166,7 +168,7 @@ func generateSentinelCtx(sb StringWriter) error {
 	sb.WriteString("export type SentinelCtx = \n  ")
 
 	var i int
-	for k := range pageIDContextMap {
+	for _, k := range slices.Sorted(maps.Keys(pageIDContextMap)) {
 		if i > 0 {
 			sb.WriteString(" |\n  ")
 		}
@@ -201,6 +203,10 @@ func generateTypes(folderPath string) error {
 	sb.WriteString("\n")
 	generateExtendedType[types.ErrorSentinelCtx](&sb)
 	sb.WriteString("\n")
+	generateExtendedType[types.UserSentinelCtx](&sb)
+	sb.WriteString("\n")
+	generateExtendedType[types.UserEditSentinelCtx](&sb)
+	sb.WriteString("\n")
 
 	generateEnum(&sb, types.MessageTypeValues())
 	sb.WriteString("\n")
@@ -212,6 +218,10 @@ func generateTypes(folderPath string) error {
 	generateType[types.CSRF](&sb)
 	sb.WriteString("\n")
 	generateType[types.URLs](&sb)
+	sb.WriteString("\n")
+	generateType[types.User](&sb)
+	sb.WriteString("\n")
+	generateType[types.Account](&sb)
 	sb.WriteString("\n")
 
 	generateSentinelCtx(&sb)
@@ -231,6 +241,8 @@ var pageIDContextMap = map[string]string{
 	"InfoSentinelCtx":         string(types.PageIDInfotmpl),
 	"FormPostSentinelCtx":     string(types.PageIDFormPosttmpl),
 	"FormRedirectSentinelCtx": string(types.PageIDFormRedirecttmpl),
+	"UserSentinelCtx":         string(types.PageIDUsertmpl),
+	"UserEditSentinelCtx":     string(types.PageIDUserEdittmpl),
 }
 
 func run(_ context.Context) error {

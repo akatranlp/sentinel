@@ -8,6 +8,9 @@ import { ThemeToggle } from "./components/theme-toggle";
 import { ModeToggle } from "./components/mode-toggle";
 import { Alert, AlertDescription, AlertTitle } from "./components/ui/alert";
 import { Terminal } from "lucide-react";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuTrigger } from "./components/ui/dropdown-menu";
+import { Button } from "./components/ui/button";
+import { Avatar, AvatarFallback, AvatarImage } from "./components/ui/avatar";
 export default function Template(props: TemplateProps<SentinelCtx>) {
   const {
     documentTitle,
@@ -15,7 +18,7 @@ export default function Template(props: TemplateProps<SentinelCtx>) {
     children
   } = props;
 
-  const { message, pageId, urls } = sentinelCtx;
+  const { message, pageId, urls, user } = sentinelCtx;
 
   // TODO: add appURL, user
   // const appURL = undefined
@@ -57,17 +60,22 @@ export default function Template(props: TemplateProps<SentinelCtx>) {
           <div className="flex gap-4">
             <ThemeToggle />
             <ModeToggle />
-            {/* if user != nil { */}
-            {/*   <div className="relative"> */}
-            {/*     <li onclick="toggleDropdown(event)" className="avatar dropdown-button"> */}
-            {/*       <img onerror="this.parentNode.innerHTML=`<div className='avatar-fallback text-primary-foreground dropdown-button'>TT</div>`" class="avatar-image dropdown-button" src={user.Picture} /> */}
-            {/*     </li> */}
-            {/*     <div data-state="closed" className="dropdown-content hidden"> */}
-            {/*       <p className="py-2 px-4 text-sm font-bold">{"@" + user.Username}</p> */}
-            {/*       <a href={templ.SafeURL(basePath + "/logout")} className="btn-ghost justify-start w-full py-0">Logout</a> */}
-            {/*     </div> */}
-            {/*   </div> */}
-            {/* } */}
+            {user && (
+              <DropdownMenu>
+                <DropdownMenuTrigger>
+                  <Avatar>
+                    <AvatarImage src={user.picture} alt={"@" + user.username} />
+                    <AvatarFallback>{user.name.split(" ").map(v => v[0])}</AvatarFallback>
+                  </Avatar>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent>
+                  <p className="py-2 px-4 text-sm font-bold">{"@" + user.username}</p>
+                  <Button variant="ghost" className="justify-start w-full py-0" asChild>
+                    <a href={urls.basePath + "/logout"}>Logout</a>
+                  </Button>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            )}
           </div>
         </div>
       </div>

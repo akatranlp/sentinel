@@ -1,4 +1,4 @@
-export const pageID = ["login.tmpl", "error.tmpl", "info.tmpl", "form-redirect.tmpl", "form-post.tmpl"] as const;
+export const pageID = ["login.tmpl", "error.tmpl", "info.tmpl", "form-redirect.tmpl", "form-post.tmpl", "user.tmpl", "user-edit.tmpl"] as const;
 export type PageID = typeof pageID[number]
 
 export type CommonSentinelCtx = {
@@ -6,6 +6,7 @@ export type CommonSentinelCtx = {
   message: Message | null;
   messages: Message[] | null;
   urls: URLs;
+  user: User | null;
 }
 
 export type LoginSentinelCtx = CommonSentinelCtx & {
@@ -34,6 +35,22 @@ export type ErrorSentinelCtx = CommonSentinelCtx & {
   message: Message;
 }
 
+export type UserSentinelCtx = CommonSentinelCtx & {
+  pageId: "user.tmpl"
+  user: User;
+  accounts: Account[] | null;
+  providers: Provider[] | null;
+  csrf: CSRF;
+}
+
+export type UserEditSentinelCtx = CommonSentinelCtx & {
+  pageId: "user-edit.tmpl"
+  user: User;
+  accounts: Account[] | null;
+  providers: Provider[] | null;
+  csrf: CSRF;
+}
+
 export const messageType = ["info", "success", "error", "warning"] as const;
 export type MessageType = typeof messageType[number]
 
@@ -48,6 +65,7 @@ export type Provider = {
   providerId: string;
   displayName: string;
   icon: string;
+  isLinked: boolean;
 }
 
 export type CSRF = {
@@ -60,12 +78,30 @@ export type URLs = {
   resourcePath: string;
 }
 
+export type User = {
+  id: string;
+  name: string;
+  username: string;
+  picture: string;
+  email: string;
+}
+
+export type Account = {
+  provider: string;
+  email: string;
+  name: string;
+  username: string;
+  picture: string;
+}
+
 export type SentinelCtx = 
-  LoginSentinelCtx |
   ErrorSentinelCtx |
-  InfoSentinelCtx |
   FormPostSentinelCtx |
-  FormRedirectSentinelCtx
+  FormRedirectSentinelCtx |
+  InfoSentinelCtx |
+  LoginSentinelCtx |
+  UserEditSentinelCtx |
+  UserSentinelCtx
 
 export type ExtractSentinelCtx<T extends PageID> = Extract<SentinelCtx, { pageId: T }>
 

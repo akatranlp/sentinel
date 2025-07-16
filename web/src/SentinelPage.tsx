@@ -14,6 +14,8 @@ export const Info = lazy(() => import("./pages/Info"));
 export const Error = lazy(() => import("./pages/Error"));
 export const FormRedirect = lazy(() => import("./pages/FormRedirect"));
 export const FormPost = lazy(() => import("./pages/FormPost"));
+export const User = lazy(() => import("./pages/User"));
+export const UserEdit = lazy(() => import("./pages/UserEdit"));
 // export const Terms = lazy(() => import("./pages/Terms"));
 // export const Code = lazy(() => import("./pages/Code"));
 // export const DeleteAccountConfirm = lazy(() => import("./pages/DeleteAccountConfirm"));
@@ -37,6 +39,10 @@ export function SentinelPage(props: { sentinelCtx: SentinelCtx; fallback?: React
           return <FormRedirect {...{ sentinelCtx }} Template={Template} />;
         case "form-post.tmpl":
           return <FormPost {...{ sentinelCtx }} Template={Template} />;
+        case "user.tmpl":
+          return <User {...{ sentinelCtx }} Template={Template} />;
+        case "user-edit.tmpl":
+          return <UserEdit {...{ sentinelCtx }} Template={Template} />;
           {/* case "terms.tmpl": */ }
           {/*   return <Terms {...{ sentinelCtx }} Template={Template} />; */ }
           {/* case "login-idp-link-confirm.tmpl": */ }

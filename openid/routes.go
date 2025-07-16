@@ -19,7 +19,7 @@ import (
 )
 
 func (ip *IdentitiyProvider) Handler() http.Handler {
-	r := chi.NewRouter()
+	root := chi.NewRouter()
 
 	var corsMiddleware *cors.Cors
 	// corsMiddleware = cors.AllowAll()
@@ -47,100 +47,110 @@ func (ip *IdentitiyProvider) Handler() http.Handler {
 		AllowCredentials: false,
 	})
 
-	r.Use(middleware.Forwarded(0))
-	r.Use(func(next http.Handler) http.Handler {
-		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			proto := middleware.Proto(r)
-			if proto == "http" {
-				*r = *csrf.PlaintextHTTPRequest(r)
-			}
-			next.ServeHTTP(w, r)
-		})
-	})
-	// r.Use(chiMiddleware.Logger)
-	r.Use(func(h http.Handler) http.Handler {
-		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			ctx := r.Context()
-			j, err := ip.joseBuilder.Build(middleware.Origin(r))
-			if err != nil {
-				http.Error(w, err.Error(), http.StatusInternalServerError)
-				return
-			}
-			ctx = jose.SetJose(ctx, j)
-			ctx = shared.SetBasePath(ctx, ip.basePath)
-			ctx = shared.SetAppURL(ctx, ip.appURL)
-			ctx = shared.SetPath(ctx, r.URL.Path)
-
-			*r = *r.WithContext(ctx)
-			h.ServeHTTP(w, r)
-		})
-	})
-	r.Use(ip.sessionManager.LoadAndSave)
-
-	r.Group(func(r chi.Router) {
-		r.Use(ip.sessionManager.CsrfMiddleware())
-
-		r.Handle("/", http.RedirectHandler(ip.basePath+"/user", http.StatusTemporaryRedirect))
-		r.Get("/login", ip.LoginPage)
-		r.Post("/login", ip.LoginPage)
-		r.Get("/logout", ip.LogoutPage)
-		r.Post("/logout", ip.Logout)
-
-		r.Get("/user", ip.UserPage)
-		r.Get("/user/edit", ip.UserEditPage)
-		r.Post("/user/edit", ip.UserEdit)
-	})
-
-	r.Handle("/assets/*", http.StripPrefix(ip.basePath+"/assets/", http.FileServerFS(ip.assetFS)))
-	r.Handle("/dist/*", http.StripPrefix(ip.basePath+"/", http.FileServerFS(assets.Assets)))
-
-	r.Route("/oauth", func(r chi.Router) {
-		r.Use(corsMiddleware.Handler)
-
-		r.Get("/authorize", ip.OauthAuthorize)
-		r.Post("/authorize", ip.OauthAuthorize)
-
-		r.Post("/token", ip.OauthToken)
-
-		r.Post("/introspect", ip.OauthIntrospect)
-		r.Post("/revoke", ip.OauthRevoke)
-		r.Get("/userinfo", ip.OauthUserInfo)
-		r.Post("/userinfo", ip.OauthUserInfo)
-		//
-		r.Group(func(r chi.Router) {
-			r.Use(func(next http.Handler) http.Handler {
-				return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-					if r.FormValue(ip.sessionManager.CsrfFormField()) == "" {
-						csrf.UnsafeSkipCheck(r)
-					}
-					next.ServeHTTP(w, r)
-				})
+	root.Group(func(r chi.Router) {
+		r.Use(func(h http.Handler) http.Handler {
+			return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+				w.Header().Set("Cache-Control", "public, max-age=10")
+				h.ServeHTTP(w, r)
 			})
-			r.Use(ip.sessionManager.CsrfMiddleware())
-			r.Get("/logout", ip.OauthLogout)
-			r.Post("/logout", ip.OauthLogout)
 		})
-
-		r.Get("/discovery/keys", ip.OauthDiscoveryKeys)
+		r.Handle("/assets/*", http.StripPrefix(ip.basePath+"/assets/", http.FileServerFS(ip.assetFS)))
+		r.Handle("/dist/*", http.StripPrefix(ip.basePath+"/", http.FileServerFS(assets.Assets)))
 	})
 
-	r.Route("/.well-known", func(r chi.Router) {
-		r.Use(corsMiddleware.Handler)
+	root.Group(func(r chi.Router) {
+		r.Use(middleware.Forwarded(0))
+		r.Use(func(next http.Handler) http.Handler {
+			return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+				proto := middleware.Proto(r)
+				if proto == "http" {
+					*r = *csrf.PlaintextHTTPRequest(r)
+				}
+				next.ServeHTTP(w, r)
+			})
+		})
+		// r.Use(chiMiddleware.Logger)
+		r.Use(func(h http.Handler) http.Handler {
+			return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+				ctx := r.Context()
+				j, err := ip.joseBuilder.Build(middleware.Origin(r))
+				if err != nil {
+					http.Error(w, err.Error(), http.StatusInternalServerError)
+					return
+				}
+				ctx = jose.SetJose(ctx, j)
+				ctx = shared.SetBasePath(ctx, ip.basePath)
+				ctx = shared.SetAppURL(ctx, ip.appURL)
+				ctx = shared.SetPath(ctx, r.URL.Path)
 
-		r.Get("/openid-configuration", ip.WellKnownOpenIDConfiguration)
-		r.Get("/oauth-authorization-server", ip.WellKnownOpenIDConfiguration)
-	})
+				*r = *r.WithContext(ctx)
+				h.ServeHTTP(w, r)
+			})
+		})
+		r.Use(ip.sessionManager.LoadAndSave)
 
-	r.Route("/{provider}", func(r chi.Router) {
 		r.Group(func(r chi.Router) {
 			r.Use(ip.sessionManager.CsrfMiddleware())
-			r.Post("/login", ip.ProviderLogin)
-			r.Post("/link", nil) // Until now we use /login even for linking
-			r.Post("/unlink", ip.ProviderUnlink)
+
+			r.Handle("/", http.RedirectHandler(ip.basePath+"/user", http.StatusTemporaryRedirect))
+			r.Get("/login", ip.LoginPage)
+			r.Post("/login", ip.LoginPage)
+			r.Get("/logout", ip.LogoutPage)
+			r.Post("/logout", ip.Logout)
+
+			r.Get("/user", ip.UserPage)
+			r.Get("/user/edit", ip.UserEditPage)
+			r.Post("/user/edit", ip.UserEdit)
 		})
-		r.Get("/callback", ip.ProviderCallback)
-		r.Post("/callback", ip.ProviderCallback)
+
+		r.Route("/oauth", func(r chi.Router) {
+			r.Use(corsMiddleware.Handler)
+
+			r.Get("/authorize", ip.OauthAuthorize)
+			r.Post("/authorize", ip.OauthAuthorize)
+
+			r.Post("/token", ip.OauthToken)
+
+			r.Post("/introspect", ip.OauthIntrospect)
+			r.Post("/revoke", ip.OauthRevoke)
+			r.Get("/userinfo", ip.OauthUserInfo)
+			r.Post("/userinfo", ip.OauthUserInfo)
+			//
+			r.Group(func(r chi.Router) {
+				r.Use(func(next http.Handler) http.Handler {
+					return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+						if r.FormValue(ip.sessionManager.CsrfFormField()) == "" {
+							csrf.UnsafeSkipCheck(r)
+						}
+						next.ServeHTTP(w, r)
+					})
+				})
+				r.Use(ip.sessionManager.CsrfMiddleware())
+				r.Get("/logout", ip.OauthLogout)
+				r.Post("/logout", ip.OauthLogout)
+			})
+
+			r.Get("/discovery/keys", ip.OauthDiscoveryKeys)
+		})
+
+		r.Route("/.well-known", func(r chi.Router) {
+			r.Use(corsMiddleware.Handler)
+
+			r.Get("/openid-configuration", ip.WellKnownOpenIDConfiguration)
+			r.Get("/oauth-authorization-server", ip.WellKnownOpenIDConfiguration)
+		})
+
+		r.Route("/{provider}", func(r chi.Router) {
+			r.Group(func(r chi.Router) {
+				r.Use(ip.sessionManager.CsrfMiddleware())
+				r.Post("/login", ip.ProviderLogin)
+				r.Post("/link", nil) // Until now we use /login even for linking
+				r.Post("/unlink", ip.ProviderUnlink)
+			})
+			r.Get("/callback", ip.ProviderCallback)
+			r.Post("/callback", ip.ProviderCallback)
+		})
 	})
 
-	return r
+	return root
 }

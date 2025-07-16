@@ -22,8 +22,6 @@ github.com/akatranlp/go-pkg/middleware v0.0.0-20250513173302-988d700e2a27 h1:SUn
 github.com/akatranlp/go-pkg/middleware v0.0.0-20250513173302-988d700e2a27/go.mod h1:3xVAyafXw3ogdrBxysJhNE+EWdZXHRWwRz/ZzcamBq0=
 github.com/alecthomas/chroma/v2 v2.17.2 h1:Rm81SCZ2mPoH+Q8ZCc/9YvzPUN/E7HgPiPJD8SLV6GI=
 github.com/alecthomas/chroma/v2 v2.17.2/go.mod h1:RVX6AvYm4VfYe/zsk7mjHueLDZor3aWCNE14TFlepBk=
-github.com/alexedwards/scs/v2 v2.8.0 h1:h31yUYoycPuL0zt14c0gd+oqxfRwIj6SOjHdKRZxhEw=
-github.com/alexedwards/scs/v2 v2.8.0/go.mod h1:ToaROZxyKukJKT/xLcVQAChi5k6+Pn1Gvmdl7h3RRj8=
 github.com/alexedwards/scs/v2 v2.8.1-0.20250417082927-ab20b3feb5e9 h1:H9DIdBsbEKOvJu9ZoMVkyHxvECeVULv8QhBrIAtQUy0=
 github.com/alexedwards/scs/v2 v2.8.1-0.20250417082927-ab20b3feb5e9/go.mod h1:ToaROZxyKukJKT/xLcVQAChi5k6+Pn1Gvmdl7h3RRj8=
 github.com/andybalholm/brotli v1.1.1 h1:PR2pgnyFznKEugtsUo0xLdDop5SKXd5Qf5ysW+7XdTA=
