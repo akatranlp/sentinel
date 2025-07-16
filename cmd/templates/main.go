@@ -11,7 +11,7 @@ import (
 	"reflect"
 	"strings"
 
-	"github.com/akatranlp/sentinel/web"
+	"github.com/akatranlp/sentinel/openid/types"
 )
 
 type StringWriter interface {
@@ -187,31 +187,31 @@ func generateSentinelCtx(sb StringWriter) error {
 
 func generateTypes(folderPath string) error {
 	var sb bytes.Buffer
-	generateEnum(&sb, web.PageIDValues())
+	generateEnum(&sb, types.PageIDValues())
 	sb.WriteString("\n")
-	generateType[web.SentinelCtx](&sb)
+	generateType[types.SentinelCtx](&sb)
 	sb.WriteString("\n")
-	generateExtendedType[web.LoginSentinelCtx](&sb)
+	generateExtendedType[types.LoginSentinelCtx](&sb)
 	sb.WriteString("\n")
-	generateExtendedType[web.FormRedirectSentinelCtx](&sb)
+	generateExtendedType[types.FormRedirectSentinelCtx](&sb)
 	sb.WriteString("\n")
-	generateExtendedType[web.FormPostSentinelCtx](&sb)
+	generateExtendedType[types.FormPostSentinelCtx](&sb)
 	sb.WriteString("\n")
-	generateExtendedType[web.InfoSentinelCtx](&sb)
+	generateExtendedType[types.InfoSentinelCtx](&sb)
 	sb.WriteString("\n")
-	generateExtendedType[web.ErrorSentinelCtx](&sb)
-	sb.WriteString("\n")
-
-	generateEnum(&sb, web.MessageTypeValues())
-	sb.WriteString("\n")
-	generateType[web.Message](&sb)
+	generateExtendedType[types.ErrorSentinelCtx](&sb)
 	sb.WriteString("\n")
 
-	generateType[web.Provider](&sb)
+	generateEnum(&sb, types.MessageTypeValues())
 	sb.WriteString("\n")
-	generateType[web.CSRF](&sb)
+	generateType[types.Message](&sb)
 	sb.WriteString("\n")
-	generateType[web.URLs](&sb)
+
+	generateType[types.Provider](&sb)
+	sb.WriteString("\n")
+	generateType[types.CSRF](&sb)
+	sb.WriteString("\n")
+	generateType[types.URLs](&sb)
 	sb.WriteString("\n")
 
 	generateSentinelCtx(&sb)
@@ -226,11 +226,11 @@ func generateTypes(folderPath string) error {
 }
 
 var pageIDContextMap = map[string]string{
-	"LoginSentinelCtx":        string(web.PageIDLogintmpl),
-	"ErrorSentinelCtx":        string(web.PageIDErrortmpl),
-	"InfoSentinelCtx":         string(web.PageIDInfotmpl),
-	"FormPostSentinelCtx":     string(web.PageIDFormPosttmpl),
-	"FormRedirectSentinelCtx": string(web.PageIDFormRedirecttmpl),
+	"LoginSentinelCtx":        string(types.PageIDLogintmpl),
+	"ErrorSentinelCtx":        string(types.PageIDErrortmpl),
+	"InfoSentinelCtx":         string(types.PageIDInfotmpl),
+	"FormPostSentinelCtx":     string(types.PageIDFormPosttmpl),
+	"FormRedirectSentinelCtx": string(types.PageIDFormRedirecttmpl),
 }
 
 func run(_ context.Context) error {

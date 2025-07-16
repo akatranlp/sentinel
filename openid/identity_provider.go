@@ -11,6 +11,7 @@ import (
 
 	"github.com/akatranlp/sentinel/account"
 	"github.com/akatranlp/sentinel/jose"
+	"github.com/akatranlp/sentinel/openid/types"
 	"github.com/akatranlp/sentinel/provider"
 	"github.com/akatranlp/sentinel/session"
 	"github.com/akatranlp/sentinel/token"
@@ -88,9 +89,9 @@ func NewIdentityProvider(
 	}
 
 	templates, err := template.New("templates").Funcs(template.FuncMap{
-		"toJSDeclaration": web.ToJsDeclaration,
-		"iterValue": func() iter.Seq[web.TokenResponseField] {
-			return slices.Values(web.TokenResponseFieldValues())
+		"toJSDeclaration": types.ToJsDeclaration,
+		"iterValue": func() iter.Seq[types.TokenResponseField] {
+			return slices.Values(types.TokenResponseFieldValues())
 		},
 	}).ParseFS(web.TemplateFS, "*.tmpl.html")
 	if err != nil {

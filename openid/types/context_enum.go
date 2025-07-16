@@ -4,7 +4,7 @@
 // Build Date:
 // Built By:
 
-package web
+package types
 
 import (
 	"errors"
@@ -87,6 +87,10 @@ const (
 	PageIDFormRedirecttmpl PageID = "form-redirect.tmpl"
 	// PageIDFormPosttmpl is a PageID of type form-post.tmpl.
 	PageIDFormPosttmpl PageID = "form-post.tmpl"
+	// PageIDUsertmpl is a PageID of type user.tmpl.
+	PageIDUsertmpl PageID = "user.tmpl"
+	// PageIDUserEdittmpl is a PageID of type user-edit.tmpl.
+	PageIDUserEdittmpl PageID = "user-edit.tmpl"
 )
 
 var ErrInvalidPageID = errors.New("not a valid PageID")
@@ -99,6 +103,8 @@ func PageIDValues() []PageID {
 		PageIDInfotmpl,
 		PageIDFormRedirecttmpl,
 		PageIDFormPosttmpl,
+		PageIDUsertmpl,
+		PageIDUserEdittmpl,
 	}
 }
 
@@ -120,6 +126,8 @@ var _PageIDValue = map[string]PageID{
 	"info.tmpl":          PageIDInfotmpl,
 	"form-redirect.tmpl": PageIDFormRedirecttmpl,
 	"form-post.tmpl":     PageIDFormPosttmpl,
+	"user.tmpl":          PageIDUsertmpl,
+	"user-edit.tmpl":     PageIDUserEdittmpl,
 }
 
 // ParsePageID attempts to convert a string to a PageID.

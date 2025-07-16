@@ -2,6 +2,7 @@ package openid
 
 import (
 	"fmt"
+	"io"
 	"maps"
 	"net/http"
 	"os"
@@ -9,11 +10,11 @@ import (
 	"strings"
 
 	"github.com/akatranlp/go-pkg/its"
+	"github.com/akatranlp/sentinel/openid/types"
 	"github.com/akatranlp/sentinel/openid/web"
 	"github.com/akatranlp/sentinel/provider"
 	csrf "github.com/akatranlp/sentinel/session/gorilla_csrf"
 	"github.com/akatranlp/sentinel/utils"
-	react "github.com/akatranlp/sentinel/web"
 )
 
 func (ip *IdentitiyProvider) LoginPage(w http.ResponseWriter, r *http.Request) {
@@ -33,20 +34,20 @@ func (ip *IdentitiyProvider) LoginPage(w http.ResponseWriter, r *http.Request) {
 		return strings.Compare(a.Slug, b.Slug)
 	})
 
-	reactProvs := slices.SortedFunc(its.Map21(maps.All(ip.providers), func(slug string, p provider.Provider) react.Provider {
-		return react.Provider{
+	reactProvs := slices.SortedFunc(its.Map21(maps.All(ip.providers), func(slug string, p provider.Provider) types.Provider {
+		return types.Provider{
 			LoginURL:    fmt.Sprintf("%s/%s/login?redirect=%s", ip.basePath, slug, "/auth/"),
 			Alias:       string(p.GetType()),
 			ProviderID:  slug,
 			DisplayName: p.GetName(),
 			IconPath:    utils.ParseIconURL(ip.basePath, p.GetIconURL()),
 		}
-	}), func(a, b react.Provider) int {
+	}), func(a, b types.Provider) int {
 		return strings.Compare(a.Alias, b.Alias)
 	})
 
-	sentinelCtx := react.NewSentinelCtx(ip.basePath, nil, nil)
-	loginCtx := react.NewLoginSentinelCtx(sentinelCtx, reactProvs, react.CSRF{
+	sentinelCtx := types.NewSentinelCtx(ip.basePath, nil, nil)
+	loginCtx := types.NewLoginSentinelCtx(sentinelCtx, reactProvs, types.CSRF{
 		FieldName: ip.sessionManager.CsrfFormField(),
 		Value:     csrf.Token(r),
 	})
@@ -56,5 +57,5 @@ func (ip *IdentitiyProvider) LoginPage(w http.ResponseWriter, r *http.Request) {
 		fmt.Fprintln(os.Stderr, err)
 	}
 
-	web.Login(provs, ip.sessionManager.CsrfFormField(), csrf.Token(r), "/auth/").Render(r.Context(), os.Stdout)
+	web.Login(provs, ip.sessionManager.CsrfFormField(), csrf.Token(r), "/auth/").Render(r.Context(), io.Discard)
 }
