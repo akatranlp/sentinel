@@ -46,7 +46,7 @@ func (ip *IdentitiyProvider) LoginPage(w http.ResponseWriter, r *http.Request) {
 		return strings.Compare(a.Alias, b.Alias)
 	})
 
-	sentinelCtx := types.NewSentinelCtx(ip.basePath, nil, nil)
+	sentinelCtx := types.NewSentinelCtx(ip.basePath, nil, nil, nil)
 	loginCtx := types.NewLoginSentinelCtx(sentinelCtx, reactProvs, types.CSRF{
 		FieldName: ip.sessionManager.CsrfFormField(),
 		Value:     csrf.Token(r),

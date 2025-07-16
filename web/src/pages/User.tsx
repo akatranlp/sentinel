@@ -14,19 +14,18 @@ const LinkForm = (props: { provider: Provider, csrf: CSRF }) => {
 
   const actionName = p.isLinked ? "Unlink" : "Link"
 
-  return <form method="POST" key={p.providerId} action={p.loginUrl} className="w-full">
-    <input type="hidden" name={csrf.fieldName} value={csrf.value} />
-    <Dialog open={open} onOpenChange={(open) => setOpen(open)}>
-      <DialogTrigger asChild>
-        <Button type="button" onClick={() => setOpen(true)} variant="outline" className="w-full">
-          <span className="col-start-2">
-            {/*"h-[28px] w-[28px]"*/}
-            <ProviderIcon provider={p} />
-          </span>
-          <p className="col-start-3">{actionName} with {p.displayName}</p>
-        </Button>
-      </DialogTrigger>
-      <DialogContent>
+  return <Dialog open={open} onOpenChange={(open) => setOpen(open)}>
+    <DialogTrigger asChild>
+      <Button onClick={() => setOpen(true)} variant="outline" className="w-full">
+        <span className="col-start-2">
+          {/*"h-[28px] w-[28px]"*/}
+          <ProviderIcon provider={p} />
+        </span>
+        <p className="col-start-3">{actionName} with {p.displayName}</p>
+      </Button>
+    </DialogTrigger>
+    <DialogContent>
+      <form method="POST" key={p.providerId} action={p.loginUrl} className="w-full">
         <DialogHeader>
           <DialogTitle>
             Are you absolutely sure?
@@ -36,14 +35,15 @@ const LinkForm = (props: { provider: Provider, csrf: CSRF }) => {
           </DialogDescription>
         </DialogHeader>
         <DialogFooter>
+          <input type="hidden" name={csrf.fieldName} value={csrf.value} />
           <Button variant="outline" type="button" onClick={() => setOpen(false)} className="mt-2 sm:mt-0">Cancel</Button>
           <Button type="submit" variant="default">
             {actionName}
           </Button>
         </DialogFooter>
-      </DialogContent>
-    </Dialog>
-  </form>
+      </form>
+    </DialogContent>
+  </Dialog>
 }
 
 export default function User(props: PageProps<ExtractSentinelCtx<"user.tmpl">>) {

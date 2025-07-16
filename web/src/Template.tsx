@@ -1,15 +1,14 @@
 import { useEffect } from "react";
 import type { SentinelCtx } from "./context/types";
 import type { TemplateProps } from "./TemplateProps";
-import { GalleryVerticalEnd } from "lucide-react";
+import { GalleryVerticalEnd, LogOut } from "lucide-react";
 // import { Button } from "./components/ui/button";
 import { ThemeProvider } from "./components/theme-provider";
 import { ThemeToggle } from "./components/theme-toggle";
 import { ModeToggle } from "./components/mode-toggle";
 import { Alert, AlertDescription, AlertTitle } from "./components/ui/alert";
 import { Terminal } from "lucide-react";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuTrigger } from "./components/ui/dropdown-menu";
-import { Button } from "./components/ui/button";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "./components/ui/dropdown-menu";
 import { Avatar, AvatarFallback, AvatarImage } from "./components/ui/avatar";
 export default function Template(props: TemplateProps<SentinelCtx>) {
   const {
@@ -69,10 +68,16 @@ export default function Template(props: TemplateProps<SentinelCtx>) {
                   </Avatar>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent>
-                  <p className="py-2 px-4 text-sm font-bold">{"@" + user.username}</p>
-                  <Button variant="ghost" className="justify-start w-full py-0" asChild>
-                    <a href={urls.basePath + "/logout"}>Logout</a>
-                  </Button>
+                  <DropdownMenuItem className="px-4 text-sm font-bold">
+                    {"@" + user.username}
+                  </DropdownMenuItem>
+                  <DropdownMenuItem className="px-4" asChild>
+                    <a
+                      href={urls.basePath + "/logout"}
+                    >
+                      <LogOut /> Logout
+                    </a>
+                  </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
             )}

@@ -96,6 +96,16 @@ const mock: { [K in PageID]: ExtractSentinelCtx<K> } = {
     providers,
     urls,
   } satisfies UserEditSentinelCtx,
+  "logout.tmpl": {
+    pageId: "logout.tmpl",
+    user,
+    message: null,
+    urls,
+    csrf,
+    redirect: "",
+    messages: null,
+    sessionId: "123"
+  },
   "info.tmpl": {
     pageId: "info.tmpl",
     user: null,

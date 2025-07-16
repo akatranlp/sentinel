@@ -13,7 +13,7 @@ type TokenResponseField string
 // ENUM(info, success, error, warning)
 type MessageType string
 
-// ENUM(login.tmpl, error.tmpl, info.tmpl, form-redirect.tmpl, form-post.tmpl, user.tmpl, user-edit.tmpl)
+// ENUM(login.tmpl, error.tmpl, info.tmpl, form-redirect.tmpl, form-post.tmpl, user.tmpl, user-edit.tmpl, logout.tmpl)
 type PageID string
 
 func ToJsDeclaration(v any, indent int) (template.JS, error) {
@@ -58,7 +58,7 @@ type SentinelCtx struct {
 	// Client   Client    `json:"client"`
 }
 
-func NewSentinelCtx(basePath string, message *Message, messages []Message) SentinelCtx {
+func NewSentinelCtx(basePath string, message *Message, messages []Message, user *User) SentinelCtx {
 	return SentinelCtx{
 		Message:  message,
 		Messages: messages,
@@ -66,6 +66,7 @@ func NewSentinelCtx(basePath string, message *Message, messages []Message) Senti
 			BasePath:     basePath,
 			ResourcePath: basePath + "/assets",
 		},
+		User: user,
 	}
 }
 
@@ -90,7 +91,7 @@ type LoginSentinelCtx struct {
 }
 
 func NewLoginSentinelCtx(sentinelCtx SentinelCtx, providers []Provider, csrf CSRF) LoginSentinelCtx {
-	sentinelCtx.PageID = "login.tmpl"
+	sentinelCtx.PageID = PageIDLogintmpl
 	return LoginSentinelCtx{
 		SentinelCtx: sentinelCtx,
 		Providers:   providers,
@@ -104,7 +105,7 @@ type FormRedirectSentinelCtx struct {
 }
 
 func NewFormRedirectSentinelCtx(sentinelCtx SentinelCtx, redirectURI string) FormRedirectSentinelCtx {
-	sentinelCtx.PageID = "form-redirect.tmpl"
+	sentinelCtx.PageID = PageIDFormRedirecttmpl
 	return FormRedirectSentinelCtx{
 		SentinelCtx: sentinelCtx,
 		RedirectURL: redirectURI,
@@ -117,7 +118,7 @@ type FormPostSentinelCtx struct {
 }
 
 func NewFormPostSentinelCtx(sentinelCtx SentinelCtx, redirectURI string) FormPostSentinelCtx {
-	sentinelCtx.PageID = "form-post.tmpl"
+	sentinelCtx.PageID = PageIDFormPosttmpl
 	return FormPostSentinelCtx{
 		SentinelCtx: sentinelCtx,
 		RedirectURL: redirectURI,
@@ -130,7 +131,7 @@ type InfoSentinelCtx struct {
 }
 
 func NewInfoSentinelCtx(sentinelCtx SentinelCtx, message Message) InfoSentinelCtx {
-	sentinelCtx.PageID = "info.tmpl"
+	sentinelCtx.PageID = PageIDInfotmpl
 	sentinelCtx.Message = &message
 	return InfoSentinelCtx{
 		SentinelCtx: sentinelCtx,
@@ -144,7 +145,7 @@ type ErrorSentinelCtx struct {
 }
 
 func NewErrorSentinelCtx(sentinelCtx SentinelCtx, message Message) ErrorSentinelCtx {
-	sentinelCtx.PageID = "error.tmpl"
+	sentinelCtx.PageID = PageIDErrortmpl
 	sentinelCtx.Message = &message
 	return ErrorSentinelCtx{
 		SentinelCtx: sentinelCtx,
@@ -169,7 +170,8 @@ type UserSentinelCtx struct {
 }
 
 func NewUserSentinelCtx(sentinelCtx SentinelCtx, user User, accounts []Account, providers []Provider, csrf CSRF) UserSentinelCtx {
-	sentinelCtx.PageID = "user.tmpl"
+	sentinelCtx.PageID = PageIDUsertmpl
+	sentinelCtx.User = &user
 	return UserSentinelCtx{
 		SentinelCtx: sentinelCtx,
 		User:        user,
@@ -188,12 +190,33 @@ type UserEditSentinelCtx struct {
 }
 
 func NewUserEditSentinelCtx(sentinelCtx SentinelCtx, user User, accounts []Account, providers []Provider, csrf CSRF) UserEditSentinelCtx {
-	sentinelCtx.PageID = "user-edit.tmpl"
+	sentinelCtx.PageID = PageIDUserEdittmpl
+	sentinelCtx.User = &user
 	return UserEditSentinelCtx{
 		SentinelCtx: sentinelCtx,
 		User:        user,
 		Accounts:    accounts,
 		Providers:   providers,
+		CSRF:        csrf,
+	}
+}
+
+type LogoutSentinelCtx struct {
+	SentinelCtx
+	User      User   `json:"user"`
+	CSRF      CSRF   `json:"csrf"`
+	Redirect  string `json:"redirect"`
+	SessionID string `json:"sessionId"`
+}
+
+func NewLogoutSentinelCtx(sentinelCtx SentinelCtx, user User, redirect string, sessionID string, csrf CSRF) LogoutSentinelCtx {
+	sentinelCtx.PageID = PageIDLogouttmpl
+	sentinelCtx.User = &user
+	return LogoutSentinelCtx{
+		SentinelCtx: sentinelCtx,
+		User:        user,
+		Redirect:    redirect,
+		SessionID:   sessionID,
 		CSRF:        csrf,
 	}
 }

@@ -207,6 +207,8 @@ func generateTypes(folderPath string) error {
 	sb.WriteString("\n")
 	generateExtendedType[types.UserEditSentinelCtx](&sb)
 	sb.WriteString("\n")
+	generateExtendedType[types.LogoutSentinelCtx](&sb)
+	sb.WriteString("\n")
 
 	generateEnum(&sb, types.MessageTypeValues())
 	sb.WriteString("\n")
@@ -243,6 +245,7 @@ var pageIDContextMap = map[string]string{
 	"FormRedirectSentinelCtx": string(types.PageIDFormRedirecttmpl),
 	"UserSentinelCtx":         string(types.PageIDUsertmpl),
 	"UserEditSentinelCtx":     string(types.PageIDUserEdittmpl),
+	"LogoutSentinelCtx":       string(types.PageIDLogouttmpl),
 }
 
 func run(_ context.Context) error {

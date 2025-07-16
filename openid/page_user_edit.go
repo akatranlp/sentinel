@@ -76,7 +76,7 @@ func (ip *IdentitiyProvider) UserEditPage(w http.ResponseWriter, r *http.Request
 		Email:    user.Email,
 	}
 
-	sentinelCtx := types.NewSentinelCtx(ip.basePath, nil, nil)
+	sentinelCtx := types.NewSentinelCtx(ip.basePath, nil, nil, nil)
 	userCtx := types.NewUserEditSentinelCtx(sentinelCtx, reactUser, reactAccounts, reactProvs, types.CSRF{
 		FieldName: ip.sessionManager.CsrfFormField(),
 		Value:     csrf.Token(r),

@@ -2,7 +2,6 @@ import type { Account, ExtractSentinelCtx, User } from "@/context/types";
 import type { PageProps } from "./PageProps";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { useMemo, useState } from "react";
 import { SelectTrigger, Select, SelectContent, SelectItem, SelectValue } from "@/components/ui/select";
 
@@ -63,7 +62,7 @@ export default function UserEdit(props: PageProps<ExtractSentinelCtx<"user-edit.
           <CardContent>
             <div className="flex flex-col gap-6">
               <form method="POST" className="grid gap-2 grid-cols-1 md:grid-cols-2">
-                <Input type="hidden" name={csrf.fieldName} value={csrf.value} />
+                <input type="hidden" name={csrf.fieldName} value={csrf.value} />
                 <img className="size-32 row-span-3 rounded-full self-center justify-self-center" alt="Profile-picture" src={picture} />
                 <RenderSelect {...{ fieldName: "name", user, accounts: accounts }} />
                 <RenderSelect {...{ fieldName: "username", user, accounts: accounts }} />

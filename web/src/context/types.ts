@@ -1,4 +1,4 @@
-export const pageID = ["login.tmpl", "error.tmpl", "info.tmpl", "form-redirect.tmpl", "form-post.tmpl", "user.tmpl", "user-edit.tmpl"] as const;
+export const pageID = ["login.tmpl", "error.tmpl", "info.tmpl", "form-redirect.tmpl", "form-post.tmpl", "user.tmpl", "user-edit.tmpl", "logout.tmpl"] as const;
 export type PageID = typeof pageID[number]
 
 export type CommonSentinelCtx = {
@@ -51,6 +51,13 @@ export type UserEditSentinelCtx = CommonSentinelCtx & {
   csrf: CSRF;
 }
 
+export type LogoutSentinelCtx = CommonSentinelCtx & {
+  pageId: "logout.tmpl"
+  csrf: CSRF;
+  redirect: string;
+  sessionId: string;
+}
+
 export const messageType = ["info", "success", "error", "warning"] as const;
 export type MessageType = typeof messageType[number]
 
@@ -100,6 +107,7 @@ export type SentinelCtx =
   FormRedirectSentinelCtx |
   InfoSentinelCtx |
   LoginSentinelCtx |
+  LogoutSentinelCtx |
   UserEditSentinelCtx |
   UserSentinelCtx
 

@@ -91,6 +91,8 @@ const (
 	PageIDUsertmpl PageID = "user.tmpl"
 	// PageIDUserEdittmpl is a PageID of type user-edit.tmpl.
 	PageIDUserEdittmpl PageID = "user-edit.tmpl"
+	// PageIDLogouttmpl is a PageID of type logout.tmpl.
+	PageIDLogouttmpl PageID = "logout.tmpl"
 )
 
 var ErrInvalidPageID = errors.New("not a valid PageID")
@@ -105,6 +107,7 @@ func PageIDValues() []PageID {
 		PageIDFormPosttmpl,
 		PageIDUsertmpl,
 		PageIDUserEdittmpl,
+		PageIDLogouttmpl,
 	}
 }
 
@@ -128,6 +131,7 @@ var _PageIDValue = map[string]PageID{
 	"form-post.tmpl":     PageIDFormPosttmpl,
 	"user.tmpl":          PageIDUsertmpl,
 	"user-edit.tmpl":     PageIDUserEdittmpl,
+	"logout.tmpl":        PageIDLogouttmpl,
 }
 
 // ParsePageID attempts to convert a string to a PageID.
